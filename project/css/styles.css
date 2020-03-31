@@ -1,0 +1,76 @@
+body {
+    background-image: url('bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.btn-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.btn-grid > button > img {
+    height: 40px;
+    width: 40px;
+}
+
+.btn-grid > button {
+    margin: 2px;
+    height: 65px;
+}
+
+nav {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.home-main {
+    margin-top: 175px;
+    margin-left: 50px;
+    margin-bottom: 200px;
+}
+
+.home-main > button {
+    width: 250px;
+    height: 65px;
+}
+
+.home-main > p {
+    color: white;
+}
+
+.home-main > h1 {
+    font-size: 65px;
+    color: white;
+}
+
+.main-content {
+    margin-top: 20px;
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5%;
+    border-radius: 0px;
+}
+
+.book {
+    margin-bottom: 15px;
+}
+
+.book * {
+    margin: 2px;
+}
+
+footer {
+    text-align: center;
+}
+
+footer * {
+    font-size: 15px;
+    color: white;
+}
+
+#home-search {
+    margin-top: 4px;
+    width: 504px;
+}

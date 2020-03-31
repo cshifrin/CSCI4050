@@ -1,0 +1,37 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Sign in</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+</head>
+
+<body>
+    <div class="main-content" style="margin: 15%;">
+        <h1>Sign in</h1>
+        <form action="userprofile.html">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Email (required)</label>
+                    <input type="email" class="form-control" id="inputEmail4" placeholder="example@email.com">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputPassword4">Password (required)</label>
+                    <input type="password" class="form-control" id="inputPassword4" placeholder="Example1234">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-outline-dark" style="float:right;">Sign in</button>
+            <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = 'adminprofile.html';">Admin Sign in</button>
+        </form>
+    </div>
+</body>
+
+<footer>
+        <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+    </footer>
+    
+</html>

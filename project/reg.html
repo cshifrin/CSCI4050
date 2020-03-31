@@ -1,0 +1,76 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+</head>
+
+<body>
+    <div class="main-content">
+        <h1>Registration</h1>
+        <form action="regcon.html">
+            <div class="form-group">
+                <label for="inputName">Name (required)</label>
+                <input type="text" class="form-control" id="inputName" placeholder="First Last">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Email (required)</label>
+                    <input type="email" class="form-control" id="inputEmail4" placeholder="example@email.com">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputPassword4">Password (required)</label>
+                    <input type="password" class="form-control" id="inputPassword4" placeholder="Example1234">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputAddress">Address</label>
+                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Example Street">
+            </div>
+            <div class="form-group">
+                <label for="inputAddress2">Address 2</label>
+                <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor (if any)">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputCity">City</label>
+                    <input type="text" class="form-control" id="inputCity" placeholder="Example">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputState">State</label>
+                    <input type="text" class="form-control" id="inputState" placeholder="EX">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="inputZip">Zip Code</label>
+                    <input type="text" class="form-control" id="inputZip" placeholder="12345">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputCardName">Name on Card</label>
+                    <input type="text" class="form-control" id="inputCardName" placeholder="Example Card Name">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputCardNo">Card Number</label>
+                    <input type="text" class="form-control" id="inputCardNo" placeholder="1234123412341234">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="inputCardDate">Exp.</label>
+                    <input type="text" class="form-control" id="inputCardDate" placeholder="12/1234">
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
+            <button type="submit" class="btn btn-outline-dark">Register</button>
+        </form>
+    </div>
+</body>
+
+<footer>
+        <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+    </footer>
+    
+</html>

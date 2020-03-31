@@ -1,0 +1,70 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Manage Promotions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+</head>
+
+<nav class="navbar navbar-expand-sm navbar-light">
+    <a class="navbar-brand" href="#">Our Bookstore (Administrator View)</a>
+    <ul class="navbar-nav">
+        <li class="nav-item"> <a class="nav-link" href="adminprofile.html">Profile</a> </li>
+    </ul>
+</nav>
+
+<body>
+    <div class="main-content">
+        <h1><img height="40px" src="css/mp.png"> Manage Promotions</h1>
+        <form>
+            <div class="form-group">
+                <label for="inputSearchManage">Search</label>
+                <input class="form-control" id="inputSearchManage" placeholder="PromotionCode (case sensitive)"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-outline-dark">Search</button>
+        </form>
+        <br>
+        <p>PromotionCode (<a href="">edit</a>), Description of the promotion (<a href="">edit</a>), percentOff (<a href="">edit</a>),
+            amountOff (<a href="">edit</a>) - <a href="">DELETE PROMOTION</a></p>
+        <p>PromotionCode (<a href="">edit</a>), Description of the promotion (<a href="">edit</a>), percentOff (<a href="">edit</a>),
+            amountOff (<a href="">edit</a>) - <a href="">DELETE PROMOTION</a></p>
+        <p>PromotionCode (<a href="">edit</a>), Description of the promotion (<a href="">edit</a>), percentOff (<a href="">edit</a>),
+            amountOff (<a href="">edit</a>) - <a href="">DELETE PROMOTION</a></p>
+    </div>
+    <div class="main-content">
+        <h1>Add Promotions</h1>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Promotion Code</label>
+                    <input class="form-control" placeholder="PromotionCode">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Description</label>
+                    <input class="form-control" placeholder="Description of the promotion">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Percent Off (if none, enter 0)</label>
+                    <input class="form-control" placeholder="%%">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Amount Off (if none, enter 0)</label>
+                    <input class="form-control" placeholder="$$">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-outline-dark">Add Promotion</button>
+        </form>
+    </div>
+</body>
+
+<footer>
+        <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+    </footer>
+    
+</html>

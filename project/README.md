@@ -3,15 +3,14 @@ Software Engineering
 
 Online Bookstore System 
 
-Deliverable 4: UI Prototype
-02/26/2020
+Deliverable 6
 
 Team 8
 Team Members
 
-Mohammed Aldosari	811537656               
-Daniel Garcia		811885075
-Angela Tsao		811733443
-Chris Shifrin		811190905
+Mohammed Aldosari            
+Daniel Garcia
+Angela Tsao
+Chris Shifrin
 
 To view the project, first view the 'home.html' and navigate the website using the buttons. To sign in, simply go to the sign in page and click 'Sign in' to sign in as a user and 'Admin Sign in' to sign in as an administrator.

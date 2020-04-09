@@ -13,18 +13,24 @@
     <div class="main-content">
         <h1>Registration</h1>
         <form action="regcon.html">
-            <div class="form-group">
-                <label for="inputName">Name (required)</label>
-                <input type="text" class="form-control" id="inputName" placeholder="First Last">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputName">Name (required)</label>
+                    <input type="text" class="form-control" id="inputName" placeholder="First Last" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputPhone">Phone (required)</label>
+                    <input type="tel" class="form-control" id="inputPhone" placeholder="1-(555)-555-5555" required>
+                </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputEmail4">Email (required)</label>
-                    <input type="email" class="form-control" id="inputEmail4" placeholder="example@email.com">
+                    <input type="email" class="form-control" id="inputEmail4" placeholder="example@email.com" required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputPassword4">Password (required)</label>
-                    <input type="password" class="form-control" id="inputPassword4" placeholder="Example1234">
+                    <input type="password" class="form-control" id="inputPassword4" placeholder="Example1234" required>
                 </div>
             </div>
             <div class="form-group">
@@ -64,13 +70,15 @@
                 </div>
             </div>
             <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
-            <button type="submit" class="btn btn-outline-dark">Register</button>
+
+            <!-- This button should redirect to regcon.html -->
+            <button type="submit" class="btn btn-outline-dark" onclick="submit">Register</button>
         </form>
     </div>
 </body>
 
 <footer>
-        <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
-    </footer>
-    
+    <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+</footer>
+
 </html>

@@ -12,26 +12,41 @@
 <body>
     <div class="main-content" style="margin: 15%;">
         <h1>Sign in</h1>
+
+        <!-- Action changes based on where you're redirecting to -->
         <form action="userprofile.html">
+
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputEmail4">Email (required)</label>
-                    <input type="email" class="form-control" id="inputEmail4" placeholder="example@email.com">
+                    <input type="email" class="form-control" id="inputEmail4" placeholder="example@email.com" required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputPassword4">Password (required)</label>
-                    <input type="password" class="form-control" id="inputPassword4" placeholder="Example1234">
+                    <input type="password" class="form-control" id="inputPassword4" placeholder="Example1234" required>
                 </div>
             </div>
-            <button type="submit" class="btn btn-outline-dark" style="float:right;">Sign in</button>
+
+            <!-- This button should redirect to userprofile.html or adminprofile.html depending on credentials -->
+            <button type="submit" class="btn btn-outline-dark" onclick="submit" style="float:right;">Sign in</button>
+
             <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
-            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = 'adminprofile.html';">Admin Sign in</button>
+            
+            <!-- Send email containing password when this button is clicked -->
+            <button type="button" class="btn btn-outline-dark" onclick="fp()">Forgot Password?</button>
         </form>
+
+        <!-- Forgot Password Pop-up -->
+        <script>
+            function fp() {
+                alert("An email has been sent to you containing your password.");
+            }
+        </script>
     </div>
 </body>
 
 <footer>
-        <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
-    </footer>
-    
+    <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+</footer>
+
 </html>

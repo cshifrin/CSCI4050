@@ -1,0 +1,45 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+</head>
+
+<nav class="navbar navbar-expand-sm navbar-light">
+    <a class="navbar-brand" href="#">Our Bookstore</a>
+    <ul class="navbar-nav">
+        <li class="nav-item"> <a class="nav-link" href="userprofile.php">Profile</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="search.php">Search Books</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="cart.php">Shopping Cart</a> </li>
+    </ul>
+</nav>
+
+<body>
+    <div class="main-content" style="text-align:center;">
+        <h1>Welcome to Your Profile</h1>
+        <br>
+        <div class="btn-grid">
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href='editprofile.php';"><img
+                    src="css/ep.png"> Edit
+                Profile</button>
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href='cart.php';"><img src="css/vsc.png">
+                View Shopping Cart</button>
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href='orderhistory.php';"><img
+                    src="css/voh.png"> View Order History</button>
+
+            <!-- Logout button -->
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href='index.php';"><img src="css/so.png">
+                Sign Out</button>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+</footer>
+
+</html>

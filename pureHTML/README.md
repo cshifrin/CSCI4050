@@ -14,5 +14,3 @@ Angela Tsao
 Chris Shifrin
 
 To view the project, first view the 'home.html' and navigate the website using the buttons. To sign in, simply go to the sign in page and click 'Sign in' to sign in as a user and 'Admin Sign in' to sign in as an administrator.
-
-All HTML files and the CSS folder have to be in 'templates' folder.

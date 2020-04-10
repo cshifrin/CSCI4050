@@ -17,7 +17,7 @@ To open this project and you are using a Mac, go to this directory containing th
 
 php -S localhost:8000
 
-Then, go to your web browser and as enter localhost:8000 in the URL. If you are using anything other than a Mac, you need to download something like XAMPP or WAMP and follow that process accordingly. The home page is titled index.php.
+Then, go to your web browser and enter localhost:8000 in the URL. If you are using anything other than a Mac, you need to download something like XAMPP or WAMP and follow that process accordingly. The home page is titled index.php.
 
 The following files contain .php code that needs to be edited and connected to the database. Comments written in all caps are what need to be implemented.
 - editprofile.php

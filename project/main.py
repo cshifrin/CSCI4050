@@ -13,8 +13,10 @@ app.config['MYSQL_DB'] = 'BookStore'
 
 mysql = MySQL(app)
 
-#enable user to register
-@app.route('/BookStore/', methods=['GET', 'POST'])
+#######################################################################
+##########################     LOGIN     ##############################
+#######################################################################
+@app.route('/BookStore/Users', methods=['GET', 'POST'])
 def login():
     return render_template('signin.html', msg='')
     msg = ''
@@ -39,9 +41,24 @@ def login():
             msg = 'ERROR'
     return render_template('home.html', msg=msg)
 
-#If account exists create session
-#if account:
- #   return 'Logged in successfully.'
-#else:
- #   msg = 'Incorrect email/password.'
-  #  return msg
+######################################################################
+#####################      REGISTRATION     ##########################
+######################################################################
+@app.route('/BookStore/Users', methods=['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form and 'inputAddress' in request.form and 'inputCity' in request.form and 'inputState' in request.form and 'inputZip' in request.form and 'inputCardName' in request.form and 'inputCardNo' in request.form and 'inputCardDate' in request.form:
+        inputName = request.form['inputName']
+        inputPhone = request.form['inputPhone']
+        inputEmail = request.form['inputEmail']
+        inputPassword = request.form['inputPassword']
+        inputAddress = request.form['inputAddress']
+        inputCity = request.form['inputCity']
+        inputState = request.form['inputstate']
+        inputZip = request.form['inputZip']
+        inputCardName = request.form['inputCardName']
+        inputCardNo = request.form['inputCardNo']
+        inputCardDate = request.form['inputCardDate']
+    elif request.method == 'POST':
+        msg = 'Please fill out ALL required fields.'
+    return render_template('reg.html', msg=msg)

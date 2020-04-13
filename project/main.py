@@ -36,16 +36,27 @@ def login():
             session['loggedin'] = True
             session['inputEmail'] = user['inputEmail']
             session['inputPassword'] = user['inputPassword']
-            return 'Logged in successfully.'
+            return render_template('userprofile.html', msg='')
         else:
-            msg = 'ERROR'
-    return render_template('home.html', msg=msg)
-
+            msg = 'Incorrect username/password.'
+            return render_template('signin.html', msg=msg)
+        
+######################################################################
+############################    LOGOUT    ############################
+######################################################################
+@app.route('/BookStore/Users')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    return render_template('signin.html', msg='')
+        
 ######################################################################
 #####################      REGISTRATION     ##########################
 ######################################################################
 @app.route('/BookStore/Users', methods=['GET', 'POST'])
 def register():
+    return render_template('reg.html', msg='')
     msg = ''
     if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form and 'inputAddress' in request.form and 'inputCity' in request.form and 'inputState' in request.form and 'inputZip' in request.form and 'inputCardName' in request.form and 'inputCardNo' in request.form and 'inputCardDate' in request.form:
         inputName = request.form['inputName']
@@ -62,3 +73,8 @@ def register():
     elif request.method == 'POST':
         msg = 'Please fill out ALL required fields.'
     return render_template('reg.html', msg=msg)
+
+#######################################################################
+########################     PASSWORD RESET     #######################
+#######################################################################
+

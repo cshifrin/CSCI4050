@@ -117,6 +117,19 @@ def register():
 	cardID = cardID +1
 
 	####TODO////// --> We need to SEND CONFIRMATION EMAIL
+	
+	 confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+	
+        confirm_url = url_for('users.confirm_email', 
+        token=confirm_serializer.dumps(inputEmail, salt='email-confirmation-salt'),
+        _external=True)
+
+        html = render_template('emailContent.html', confirm_url=confirm_url)
+	
+        send_email('Confirm Your Email Address', [inputEmail], html)
+        flash('Thanks for registering! Please confirm your account by finding the message sent to your email address.', 'success')
+
+
 	###TODO: Redirect to REGCON page. 
 	return render_template('regcon.html')
 

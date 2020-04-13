@@ -26,22 +26,14 @@
                     <input type="password" class="form-control" name="inputPassword" id="inputPassword" placeholder="Example1234" required>
                 </div>
             </div>
-
+            
             <!-- This button should redirect to userprofile.html or adminprofile.html depending on credentials -->
             <button name="submit" type="submit" class="btn btn-outline-dark" onclick="submit" style="float:right;">Sign in</button>
 
             <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
             
-            <!-- Send email containing password when this button is clicked -->
-            <button type="button" class="btn btn-outline-dark" onclick="fp()">Forgot Password?</button>
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = 'forgotpwd.html';">Forgot Password?</button>
         </form>
-
-        <!-- Forgot Password Pop-up -->
-        <script>
-            function fp() {
-                alert("An email has been sent to you containing your password.");
-            }
-        </script>
     </div>
 </body>
 

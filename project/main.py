@@ -3,6 +3,10 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
 import smtplib, ssl
+import random
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 import mysql.connector
 
@@ -149,15 +153,32 @@ def resetPassword():
         cursor = mysql.connection.cursor(MySQL.cursors.DictCursor)
         cursor.execute('Select * FROM Users WHERE Email = %s', (emailFP))
         user = cursor.fetchone()
-
+        #SEND EMAIL WITH RANDOM CODE TO USER
         if user:
-            #TODO: SEND EMAIL WITH CODE TO USER
+            email = emailFP
+            randomCode = random.randrange(1000, 10000, 10)
+            mail = smtplib.SMTP('smtp.gmail.com', 587)
+            mail.ehlo()
+            mail.starttls()
+            mail.login('bookstoreuga4050@gmail.com','@Bookstoreuga4050')
+            mail.sendmail('bookstoreuga4050@gmail.com', email, randomCode)
+            mail.close()
+        
             return render_template('changepwd.html', msg='')
+        
             if request.method == 'POST' and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
                 #TODO: if codes match AND new/confirm passwords match, save in database
-                return render_template('signin.html', msg='')
+                if newPass == confirmPass and codeFP == randomCode:
+                    msg = 'Password changed successfully.'
+                    return render_template('signin.html', msg='')
+                else:
+                    msg = 'Passwords or code do not match. Try again.'
+                    return render_template('changepwd.html', msg)
         
             
         else:
             msg='Invalid email. Please try again.'
-            return render_template('forgotpwd.html')
+            return render_template('forgotpwd.html', msg='')
+    else:
+        msg = 'Email address not recognized. Please try again.'
+        return render_template('forgotpwd.html', msg)

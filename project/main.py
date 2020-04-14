@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
+import smtplib, ssl
 
 import mysql.connector
 
@@ -40,7 +41,7 @@ mysql = MySQL(app)
 #######################################################################
 ##########################     LOGIN     ##############################
 #######################################################################
-@app.route('/BookStore/Users', methods=['GET', 'POST'])
+@app.route('/BookStore/', methods=['GET', 'POST'])
 def login():
     return render_template('signin.html', msg='')
     msg = ''
@@ -56,7 +57,7 @@ def login():
 
 
         #Check if account exists in database
-        if account:
+        if user:
             session['loggedin'] = True
             session['inputEmail'] = user['inputEmail']
             session['inputPassword'] = user['inputPassword']
@@ -68,7 +69,7 @@ def login():
 ######################################################################
 ############################    LOGOUT    ############################
 ######################################################################
-@app.route('/BookStore/Users')
+@app.route('/BookStore/')
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
@@ -78,12 +79,11 @@ def logout():
 ######################################################################
 #####################      REGISTRATION     ##########################
 ######################################################################
-@app.route('/BookStore/Users', methods=['GET', 'POST'])
+@app.route('/BookStore/', methods=['GET', 'POST'])
 def register():
     return render_template('reg.html', msg='')
     msg = ''
-    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form
-    #and 'inputAddress' in request.form and 'inputCity' in request.form and 'inputState' in request.form and 'inputZip' in request.form and 'inputCardName' in request.form and 'inputCardNo' in request.form and 'inputCardDate' in request.form:
+    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form:
         inputName = request.form['inputName']
         inputPhone = request.form['inputPhone']
         inputEmail = request.form['inputEmail']
@@ -118,7 +118,7 @@ def register():
 
 	####TODO////// --> We need to SEND CONFIRMATION EMAIL
 	
-	 confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+	confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 	
         confirm_url = url_for('users.confirm_email', 
         token=confirm_serializer.dumps(inputEmail, salt='email-confirmation-salt'),
@@ -140,4 +140,24 @@ def register():
 #######################################################################
 ########################     PASSWORD RESET     #######################
 #######################################################################
+@app.route('/BookStore/', methods=['GET', 'POST'])
+def resetPassword():
+    return render_template('forgotpwd.html', msg='')
+    msg=''
+    if request.method == 'POST' and 'emailFP' in request.form:
+        emailFP = request.form['emailFP']
+        cursor = mysql.connection.cursor(MySQL.cursors.DictCursor)
+        cursor.execute('Select * FROM Users WHERE Email = %s', (emailFP))
+        user = cursor.fetchone()
 
+        if user:
+            #TODO: SEND EMAIL WITH CODE TO USER
+            return render_template('changepwd.html', msg='')
+            if request.method == 'POST' and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
+                #TODO: if codes match AND new/confirm passwords match, save in database
+                return render_template('signin.html', msg='')
+        
+            
+        else:
+            msg='Invalid email. Please try again.'
+            return render_template('forgotpwd.html')

@@ -14,7 +14,7 @@
         <h1>Sign in</h1>
 
         <!-- Action changes based on where you're redirecting to -->
-        <form action="userprofile.html" method="POST">
+        <form action="/BookStore/userprofile" method="POST">
 
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -27,12 +27,12 @@
                 </div>
             </div>
             
-            <!-- This button should redirect to userprofile.html or adminprofile.html depending on credentials -->
+            <!-- This button should redirect to userprofile or adminprofile depending on credentials -->
             <button name="submit" type="submit" class="btn btn-outline-dark" onclick="submit" style="float:right;">Sign in</button>
 
             <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
             
-            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = 'forgotpwd.html';">Forgot Password?</button>
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/forgotpwd';">Forgot Password?</button>
         </form>
     </div>
 </body>

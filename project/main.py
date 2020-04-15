@@ -189,8 +189,8 @@ def resetPassword():
 
 @app.route('editprofile.html', methods=['GET', 'POST'])
 def edit():
-msg = ''
-if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
+    msg = ''
+    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
 	inputName = request.form['inputName']
         inputPhone = request.form['inputPhone']
         inputEmail = request.form['inputEmail']

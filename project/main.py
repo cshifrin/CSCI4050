@@ -193,39 +193,40 @@ def resetPassword():
 
 @app.route('/BookStore/editprofile', methods=['GET', 'POST'])
 def edit():
-    msg = ''
-    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
-	inputName = request.form['inputName']
-        inputPhone = request.form['inputPhone']
-        inputEmail = request.form['inputEmail']
-        inputPassword = request.form['inputPassword']
-        inputAddress = request.form['inputAddress']
-        inputCity = request.form['inputCity']
-        inputState = request.form['inputState']
-        inputZip = request.form['inputZip']
-        inputCardName = request.form['inputCardName']
-        inputCardNo = request.form['inputCardNo']
-        inputCardDate = request.form['inputCardDate']
+	msg = ''
+	if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
+		inputName = request.form['inputName']
+		inputPhone = request.form['inputPhone']
+		inputEmail = request.form['inputEmail']
+		inputPassword = request.form['inputPassword']
+		inputAddress = request.form['inputAddress']
+		inputCity = request.form['inputCity']
+		inputState = request.form['inputState']
+		inputZip = request.form['inputZip']
+		inputCardName = request.form['inputCardName']
+		inputCardNo = request.form['inputCardNo']
+		inputCardDate = request.form['inputCardDate']
 
 #######	####Execute code to MySQL
 
-	print(inputName + ' ' + inputPhone + ' ' + inputEmail)
-	nameList = inputName.split()
-	firstName = nameList[0]
-	lastName = nameList[1]
-	regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2)
-	mycursor.execute(regFormula, regInfo)
+		print(inputName + ' ' + inputPhone + ' ' + inputEmail)
+		nameList = inputName.split()
+		firstName = nameList[0]
+		lastName = nameList[1]
+		regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2)
+		mycursor.execute(regFormula, regInfo)
 
-	addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
-	mycursor.execute(regAddressFormula, addInfo)
+		addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
+		mycursor.execute(regAddressFormula, addInfo)
 
 
-	cardInfo = (userID, addressID, cardID, inputCardNo, 0, inputCardDate, inputCardName) 
-	mycursor.execute(regCardFormula, cardInfo)
-	mycursor.commit()
+		cardInfo = (userID, addressID, cardID, inputCardNo, 0, inputCardDate, inputCardName) 
+		mycursor.execute(regCardFormula, cardInfo)
+		mycursor.commit()
 	
-	msg = 'Profile was updated.'
-	return render_template('userprofile.html', msg=msg)
+		msg = 'Profile was updated.'
+		return render_template('userprofile.html', msg=msg)
+
 
 if __name__=="__main__":
 	app.run(port=8000)

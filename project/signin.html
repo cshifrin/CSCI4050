@@ -5,8 +5,8 @@
     <title>Sign in</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="/../static/css/favicon.png">
 </head>
 
 <body>
@@ -19,20 +19,24 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputEmail">Email (required)</label>
-                    <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="example@email.com" required>
+                    <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="example@email.com"
+                        required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputPassword">Password (required)</label>
-                    <input type="password" class="form-control" name="inputPassword" id="inputPassword" placeholder="Example1234" required>
+                    <input type="password" class="form-control" name="inputPassword" id="inputPassword" placeholder="Example1234"
+                        required>
                 </div>
             </div>
-            
+
             <!-- This button should redirect to userprofile or adminprofile depending on credentials -->
-            <button name="submit" type="submit" class="btn btn-outline-dark" onclick="submit" style="float:right;">Sign in</button>
+            <button name="submit" type="submit" class="btn btn-outline-dark" onclick="submit" style="float:right;">Sign
+                in</button>
 
             <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
-            
-            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/forgotpwd';">Forgot Password?</button>
+
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/forgotpwd';">Forgot
+                Password?</button>
         </form>
     </div>
 </body>

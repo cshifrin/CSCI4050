@@ -48,7 +48,7 @@ mysql = MySQL(app)
 #######################################################################
 ##########################     LOGIN     ##############################
 #######################################################################
-@app.route('/BookStore/login', methods=['GET', 'POST'])
+@app.route('/BookStore/signin', methods=['GET', 'POST'])
 def login():
     return render_template('signin.html', msg='')
     msg = ''
@@ -76,8 +76,9 @@ def login():
 ######################################################################
 ############################    LOGOUT    ############################
 ######################################################################
-@app.route('/BookStore/logout')
+@app.route('/BookStore/userprofile')
 def logout():
+	#wtf what triggers a logout function
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
@@ -86,7 +87,7 @@ def logout():
 ######################################################################
 #####################      REGISTRATION     ##########################
 ######################################################################
-@app.route('/BookStore/register', methods=['GET', 'POST'])
+@app.route('/BookStore/reg', methods=['GET', 'POST'])
 def register():
 	return render_template('reg.html', msg='')
 	msg = ''
@@ -148,7 +149,7 @@ def register():
 #######################################################################
 ########################     PASSWORD RESET     #######################
 #######################################################################
-@app.route('/BookStore/resetpassword', methods=['GET', 'POST'])
+@app.route('/BookStore/forgotpwd', methods=['GET', 'POST'])
 def resetPassword():
     return render_template('forgotpwd.html', msg='')
     msg=''
@@ -191,7 +192,7 @@ def resetPassword():
 ########################### EDIT PROFILE #########################
 ##################################################################
 
-@app.route('/BookStore/editprofile', methods=['GET', 'POST'])
+@app.route('/BookStore/userprofile', methods=['GET', 'POST'])
 def edit():
 	msg = ''
 	if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:

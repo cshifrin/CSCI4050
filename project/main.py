@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
+#from flask_mysqldb import MySQL
+#import MySQLdb.cursors
 import re
 import smtplib, ssl
 import random
@@ -24,7 +24,7 @@ app.config['MYSQL_DB'] = 'BookStore'
 mydb = mysql.connector.connect(
 	host="localhost",
 	user="root",
-	passwd="",
+	passwd="password",
 	database="BookStore"
 )
 mycursor=mydb.cursor()
@@ -43,14 +43,18 @@ regCardFormula = "INSERT INTO Payment_Cards (User_ID, Address_ID, Card_ID, Card_
 
 
 
-mysql = MySQL(app)
+#mysql = MySQL(app)
 
 #######################################################################
 ##########################     LOGIN     ##############################
 #######################################################################
 @app.route('/BookStore/signin', methods=['GET', 'POST'])
+def viewSignin():
+    if request.method == 'GET':
+        return render_template('signin.html')
+
 def login():
-    return render_template('signin.html', msg='')
+#    return render_template('signin.html', msg='')
     msg = ''
     #Check if "email" and "password" POST requests exist
     if request.method == 'POST' and 'inputEmail' in request.form and 'inputPassword' in request.form:
@@ -58,9 +62,9 @@ def login():
         inputPassword = request.form['inputPassword']
 
         #Check if account exists using MySQL
-        cursor = mysql.connection.cursor(MySQL.cursors.DictCursor)
-        cursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s AND Status = 1', (inputEmail, inputPassword,))
-        user = cursor.fetchone()
+#       cursor = mysql.connection.cursor(MySQL.cursors.DictCursor)
+        mycursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s AND Status = 1', (inputEmail, inputPassword,))
+        user = mycursor.fetchone()
 
 
         #Check if account exists in database
@@ -72,24 +76,25 @@ def login():
         else:
             msg = 'Incorrect username/password.'
             return render_template('signin.html', msg=msg)
+
+
+######HOME PAGE##########
+@app.route('/BookStore')
+def home(): 
+	return render_template('home.html')
         
-######################################################################
-############################    LOGOUT    ############################
-######################################################################
-@app.route('/BookStore/userprofile')
-def logout():
-	#wtf what triggers a logout function
-    session.pop('loggedin', None)
-    session.pop('id', None)
-    session.pop('username', None)
-    return render_template('signin.html', msg='')
+
         
 ######################################################################
 #####################      REGISTRATION     ##########################
 ######################################################################
 @app.route('/BookStore/reg', methods=['GET', 'POST'])
+def Reg():
+    if request.method == 'GET':
+        return render_template('reg.html')
+
 def register():
-	return render_template('reg.html', msg='')
+#	return render_template('reg.html', msg='')
 	msg = ''
 	if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form:
 		inputName = request.form['inputName']
@@ -150,14 +155,18 @@ def register():
 ########################     PASSWORD RESET     #######################
 #######################################################################
 @app.route('/BookStore/forgotpwd', methods=['GET', 'POST'])
+def Forgot():
+    if request.method == 'GET':
+        return render_template('forgotpwd.html')
+
 def resetPassword():
-    return render_template('forgotpwd.html', msg='')
+#    return render_template('forgotpwd.html', msg='')
     msg=''
     if request.method == 'POST' and 'emailFP' in request.form:
         emailFP = request.form['emailFP']
-        cursor = mysql.connection.cursor(MySQL.cursors.DictCursor)
-        cursor.execute('Select * FROM Users WHERE Email = %s', (emailFP))
-        user = cursor.fetchone()
+#        cursor = mysql.connection.cursor(MySQL.cursors.DictCursor)
+        mycursor.execute('Select * FROM Users WHERE Email = %s', (emailFP))
+        user = mycursor.fetchone()
         #SEND EMAIL WITH RANDOM CODE TO USER
         if user:
             email = emailFP
@@ -192,7 +201,24 @@ def resetPassword():
 ########################### EDIT PROFILE #########################
 ##################################################################
 
+######################################################################
+############################    LOGOUT    ############################
+######################################################################
 @app.route('/BookStore/userprofile', methods=['GET', 'POST'])
+
+def Profile():
+	if request.method == 'GET':
+		return render_template('userprofile.html')
+
+
+#def logout():
+	#wtf what triggers a logout function
+#    session.pop('loggedin', None)
+#    session.pop('id', None)
+#    session.pop('username', None)
+#    return render_template('signin.html', msg='')
+
+
 def edit():
 	msg = ''
 	if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:

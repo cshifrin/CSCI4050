@@ -20,9 +20,6 @@ app.config['MYSQL_DB'] = 'BookStore'
 
 
 ####CONNECTOR CODE
-userID = 16
-addressID = 16
-cardID = 16
 
 mydb = mysql.connector.connect(
 	host="localhost",
@@ -31,6 +28,12 @@ mydb = mysql.connector.connect(
 	database="BookStore"
 )
 mycursor=mydb.cursor()
+
+userID = 18
+addressID = 18
+cardID = 18
+
+
 
 regFormula = "INSERT INTO Users (User_ID, First_Name, Last_Name, Email, Cell_Phone, Password, Status, Receive_Promotion, User_Type_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
@@ -45,7 +48,7 @@ mysql = MySQL(app)
 #######################################################################
 ##########################     LOGIN     ##############################
 #######################################################################
-@app.route('/BookStore/', methods=['GET', 'POST'])
+@app.route('/BookStore/login', methods=['GET', 'POST'])
 def login():
     return render_template('signin.html', msg='')
     msg = ''
@@ -73,7 +76,7 @@ def login():
 ######################################################################
 ############################    LOGOUT    ############################
 ######################################################################
-@app.route('/BookStore/')
+@app.route('/BookStore/logout')
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
@@ -83,69 +86,69 @@ def logout():
 ######################################################################
 #####################      REGISTRATION     ##########################
 ######################################################################
-@app.route('/BookStore/', methods=['GET', 'POST'])
+@app.route('/BookStore/register', methods=['GET', 'POST'])
 def register():
-    return render_template('reg.html', msg='')
-    msg = ''
-    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form:
-        inputName = request.form['inputName']
-        inputPhone = request.form['inputPhone']
-        inputEmail = request.form['inputEmail']
-        inputPassword = request.form['inputPassword']
-        inputAddress = request.form['inputAddress']
-        inputCity = request.form['inputCity']
-        inputState = request.form['inputstate']
-        inputZip = request.form['inputZip']
-        inputCardName = request.form['inputCardName']
-        inputCardNo = request.form['inputCardNo']
-        inputCardDate = request.form['inputCardDate']
-	inputCountry = 'USA'
-        
-        #######	####Execute code to MySQL
-	nameList = inputName.split()
-	firstName = nameList[0]
-	lastName = nameList[1]
-	regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2)
-	mycursor.execute(regFormula, regInfo)
+	return render_template('reg.html', msg='')
+	msg = ''
+	if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form:
+		inputName = request.form['inputName']
+		inputPhone = request.form['inputPhone']
+		inputEmail = request.form['inputEmail']
+		inputPassword = request.form['inputPassword']
+		inputAddress = request.form['inputAddress']
+		inputCity = request.form['inputCity']
+		inputState = request.form['inputstate']
+		inputZip = request.form['inputZip']
+		inputCardName = request.form['inputCardName']
+		inputCardNo = request.form['inputCardNo']
+		inputCardDate = request.form['inputCardDate']
+		inputCountry = 'USA'
 
-	addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
-	mycursor.execute(regAddressFormula, addInfo)
+		#######	####Execute code to MySQL
+		nameList = inputName.split()
+		firstName = nameList[0]
+		lastName = nameList[1]
+		regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2)
+		mycursor.execute(regFormula, regInfo)
 
-	cardInfo = (userID, addressID, cardID, inputCardNo, 0, inputCardDate, inputCardName) 
-	mycursor.execute(regCardFormula, cardInfo)
+		addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
+		mycursor.execute(regAddressFormula, addInfo)
 
-###DO WE NEED TO ADD A COUNTRY VARIABLE??
-	
-	mydb.commit()
-	userID = userID+1
-	addressID = addressID+1
-	cardID = cardID +1
+		cardInfo = (userID, addressID, cardID, inputCardNo, 0, inputCardDate, inputCardName) 
+		mycursor.execute(regCardFormula, cardInfo)
 
-	####TODO////// --> We need to SEND CONFIRMATION EMAIL
-	
-	confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-	
-        confirm_url = url_for('users.confirm_email', 
-        token=confirm_serializer.dumps(inputEmail, salt='email-confirmation-salt'),
-        _external=True)
+	###DO WE NEED TO ADD A COUNTRY VARIABLE??
 
-        html = render_template('emailContent.html', confirm_url=confirm_url)
-	
-        send_email('Confirm Your Email Address', [inputEmail], html)
-        flash('Thanks for registering! Please confirm your account by finding the message sent to your email address.', 'success')
+		mydb.commit()
+		userID = userID+1
+		addressID = addressID+1
+		cardID = cardID +1
+
+		####TODO////// --> We need to SEND CONFIRMATION EMAIL
+
+		confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+		confirm_url = url_for('users.confirm_email', 
+		token=confirm_serializer.dumps(inputEmail, salt='email-confirmation-salt'),
+		_external=True)
+
+		html = render_template('emailContent.html', confirm_url=confirm_url)
+
+		send_email('Confirm Your Email Address', [inputEmail], html)
+		flash('Thanks for registering! Please confirm your account by finding the message sent to your email address.', 'success')
 
 
-	###TODO: Redirect to REGCON page. 
-	return render_template('regcon.html')
+		###TODO: Redirect to REGCON page. 
+		return render_template('regcon.html')
 
-    elif request.method == 'POST':
-        msg = 'Please fill out ALL required fields.'
-    return render_template('reg.html', msg=msg)
+	elif request.method == 'POST':
+		msg = 'Please fill out ALL required fields.'
+		return render_template('reg.html', msg=msg)
 
 #######################################################################
 ########################     PASSWORD RESET     #######################
 #######################################################################
-@app.route('/BookStore/', methods=['GET', 'POST'])
+@app.route('/BookStore/resetpassword', methods=['GET', 'POST'])
 def resetPassword():
     return render_template('forgotpwd.html', msg='')
     msg=''
@@ -188,7 +191,7 @@ def resetPassword():
 ########################### EDIT PROFILE #########################
 ##################################################################
 
-@app.route('editprofile.html', methods=['GET', 'POST'])
+@app.route('/BookStore/editprofile', methods=['GET', 'POST'])
 def edit():
     msg = ''
     if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
@@ -224,3 +227,5 @@ def edit():
 	msg = 'Profile was updated.'
 	return render_template('userprofile.html', msg=msg)
 
+if __name__=="__main__":
+	app.run(port=8000)

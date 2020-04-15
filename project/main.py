@@ -20,9 +20,9 @@ app.config['MYSQL_DB'] = 'BookStore'
 
 
 ####CONNECTOR CODE
-userID = 12
-addressID = 12
-cardID = 12
+userID = 16
+addressID = 16
+cardID = 16
 
 mydb = mysql.connector.connect(
 	host="localhost",
@@ -34,7 +34,7 @@ mycursor=mydb.cursor()
 
 regFormula = "INSERT INTO Users (User_ID, First_Name, Last_Name, Email, Cell_Phone, Password, Status, Receive_Promotion, User_Type_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-regAddressFormula = "INSERT INTO Addresses (User_ID, Address_ID, Street, City, State, Zip_Code) VALUES (%s, %s, %s, %s, %s, %s)"
+regAddressFormula = "INSERT INTO Addresses (User_ID, Address_ID, Street, City, State, Country, Zip_Code) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
 regCardFormula = "INSERT INTO Payment_Cards (User_ID, Address_ID, Card_ID, Card_Number, Type_ID, Expiration_Date, Holder_Name) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
@@ -99,15 +99,16 @@ def register():
         inputCardName = request.form['inputCardName']
         inputCardNo = request.form['inputCardNo']
         inputCardDate = request.form['inputCardDate']
+	inputCountry = 'USA'
         
         #######	####Execute code to MySQL
 	nameList = inputName.split()
 	firstName = nameList[0]
 	lastName = nameList[1]
-	regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 0)
+	regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2)
 	mycursor.execute(regFormula, regInfo)
 
-	addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputZip)
+	addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
 	mycursor.execute(regAddressFormula, addInfo)
 
 	cardInfo = (userID, addressID, cardID, inputCardNo, 0, inputCardDate, inputCardName) 

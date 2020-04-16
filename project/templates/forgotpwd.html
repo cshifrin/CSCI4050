@@ -5,8 +5,8 @@
     <title>Forgot Password</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="/../static/css/favicon.png">
 </head>
 
 <body>
@@ -16,7 +16,8 @@
         <form action="/BookStore/changepwd" method="POST">
             <div class="form-group">
                 <label for="emailFP">Email (required)</label>
-                <input type="email" class="form-control" name="emailFP" id="emailFP" placeholder="example@email.com" required>
+                <input type="email" class="form-control" name="emailFP" id="emailFP" placeholder="example@email.com"
+                    required>
             </div>
             <button name="submit" type="submit" class="btn btn-outline-dark" onclick="submit">Get Code</button>
             <!-- Send email with change password code -->

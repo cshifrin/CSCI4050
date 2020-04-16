@@ -5,8 +5,8 @@
     <title>Order History</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="/../static/css/favicon.png">
 </head>
 
 <nav class="navbar navbar-expand-sm navbar-light">
@@ -20,7 +20,7 @@
 
 <body>
     <div class="main-content">
-        <h1><img height="40px" src="css/voh.png"> Order History</h1>
+        <h1><img height="40px" src="/../static/css/voh.png"> Order History</h1>
         <div class="book-list">
             <div class="book">
                 <h3>Title</h3>
@@ -29,7 +29,7 @@
                 <p>Order Number: 123456789</p>
                 <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
                     Book</button>
-                    <button type="button" class="btn btn-outline-dark" onclick="">Reorder (Add to Shopping Cart)</button>
+                <button type="button" class="btn btn-outline-dark" onclick="">Reorder (Add to Shopping Cart)</button>
                 <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/bookreturn';">Return
                     Book</button>
             </div>
@@ -40,7 +40,7 @@
                 <p>Order Number: 123456789</p>
                 <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
                     Book</button>
-                    <button type="button" class="btn btn-outline-dark" onclick="">Reorder (Add to Shopping Cart)</button>
+                <button type="button" class="btn btn-outline-dark" onclick="">Reorder (Add to Shopping Cart)</button>
                 <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/bookreturn';">Return
                     Book</button>
             </div>
@@ -62,7 +62,7 @@
 </body>
 
 <footer>
-        <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
-    </footer>
-    
+    <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+</footer>
+
 </html>

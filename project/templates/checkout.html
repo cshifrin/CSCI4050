@@ -5,8 +5,8 @@
     <title>Checkout</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="/../static/css/favicon.png">
 </head>
 
 <nav class="navbar navbar-expand-sm navbar-light">
@@ -44,7 +44,8 @@
                     Book</button>
             </div>
         </div>
-        <br><h2>Total: $price</h2><br>
+        <br>
+        <h2>Total: $price</h2><br>
         <form action="/BookStore/checkoutcon">
             <p>All fields are required!</p>
             <div class="form-group">
@@ -96,7 +97,7 @@
 </body>
 
 <footer>
-        <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
-    </footer>
-    
+    <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+</footer>
+
 </html>

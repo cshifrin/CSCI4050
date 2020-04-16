@@ -5,8 +5,8 @@
     <title>Profile</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="/../static/css/favicon.png">
 </head>
 
 <nav class="navbar navbar-expand-sm navbar-light">
@@ -22,11 +22,11 @@
         <br>
         <div class="btn-grid">
             <button type="button" class="btn btn-outline-dark" onclick="window.location.href='/BookStore/managebooks';"><img
-                    src="css/mb.png"> Manage
+                    src="/../static/css/mb.png"> Manage
                 Books</button>
 
             <!-- Logout button -->
-            <button type="button" class="btn btn-outline-dark" onclick="window.location.href='/BookStore/';"><img src="css/so.png">
+            <button type="button" class="btn btn-outline-dark" onclick="window.location.href='/BookStore/';"><img src="/../static/css/so.png">
                 Sign Out</button>
         </div>
     </div>

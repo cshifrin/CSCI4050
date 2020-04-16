@@ -5,8 +5,8 @@
     <title>Edit Profile</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="css/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="/../static/css/favicon.png">
 </head>
 
 <nav class="navbar navbar-expand-sm navbar-light">
@@ -20,16 +20,18 @@
 
 <body>
     <div class="main-content">
-        <h1><img height="40px" src="css/ep.png"> Edit Profile</h1>
+        <h1><img height="40px" src="/../static/css/ep.png"> Edit Profile</h1>
         <form action="/BookStore/userprofile" method="POST">
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputName">Name (required)</label>
-                    <input type="text" class="form-control" name="inputName" id="inputName" placeholder="First Last" required>
+                    <input type="text" class="form-control" name="inputName" id="inputName" placeholder="First Last"
+                        required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputPhone">Phone (required)</label>
-                    <input type="tel" class="form-control" name="inputPhone" id="inputPhone" placeholder="1-(555)-555-5555" required>
+                    <input type="tel" class="form-control" name="inputPhone" id="inputPhone" placeholder="1-(555)-555-5555"
+                        required>
                 </div>
             </div>
             <div class="form-row">
@@ -39,7 +41,8 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputPassword">Password (required)</label>
-                    <input type="password" class="form-control" name="inputPassword" id="inputPassword" placeholder="Example1234" required>
+                    <input type="password" class="form-control" name="inputPassword" id="inputPassword" placeholder="Example1234"
+                        required>
                 </div>
             </div>
             <div class="form-group">

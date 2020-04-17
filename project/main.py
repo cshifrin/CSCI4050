@@ -4,6 +4,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 import re
 import smtplib, ssl
 import random
+import mysql.connector
+from python_mysql_dbconfig import read_db_config
 from flaskext.mysql import MySQL
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -22,7 +24,6 @@ mysql.init_app(app)
 
 app.secret_key = 'key'
 
-
 ####CONNECTOR CODE
 
 #mydb = mysql.connector.connect(
@@ -31,7 +32,8 @@ app.secret_key = 'key'
 #	passwd="#Hunter911",
 #	database="BookStore"
 #)
-#mycursor=mydb.cursor()
+
+mycursor=mydb.cursor()
 
 userID = 18
 addressID = 18
@@ -68,6 +70,7 @@ def signin():
 
         con = mysql.connect()
         cursor = con.cursor()
+        #Check for user
         cursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s', (inputEmail, inputPassword))
         data = cursor.fetchall()
         if len(data) > 0:
@@ -135,7 +138,8 @@ def reg():
 	confirm_url = url_for('users.confirm_email', 
 	token=confirm_serializer.dumps(inputEmail, salt='email-confirmation-salt'),
 	_external=True)
-	html = render_template('emailContent.html', confirm_url=confirm_url)
+	html = render_template('emailContent.html')
+                               #confirm_url=confirm_url)
         
 	send_email('Confirm Your Email Address', [inputEmail], html)
 	flash('Thanks for registering! Please confirm your account by finding the message sent to your email address.', 'success')
@@ -144,7 +148,7 @@ def reg():
 
     elif request.method == 'POST':
        	msg = 'Please fill out ALL required fields.'
-	return render_template('reg.html', msg)     
+	return render_template('reg.html')     
 
     if request.method == 'POST' and 'inputEmail' in request.form and 'inputPassword' in request.form:
         inputEmail = request.form['inputEmail']
@@ -160,10 +164,10 @@ def reg():
             session['loggedin'] = True
             session['inputEmail'] = user['inputEmail']
             session['inputPassword'] = user['inputPassword']
-            return render_template('userprofile.html', msg='')
+            return render_template('userprofile.html')
         else:
             msg = 'Incorrect username/password.'
-            return render_template('signin.html', msg=msg)
+            return render_template('signin.html')
     else:
         return redirect('/reg')
 
@@ -191,30 +195,74 @@ def resetPwd():
         mycursor.execute('Select * FROM Users WHERE Email = %s', (emailFP))
         user = mycursor.fetchone()
         if user:
-            email = emailFP
-            randomCode = random.randrange(1000, 10000, 10)
-            mail = smtplib.SMTP('smtp.gmail.com', 587)
-            mail.ehlo()
-            mail.starttls()
-            mail.login('bookstoreuga4050@gmail.com','@Bookstoreuga4050')
-            mail.sendmail('bookstoreuga4050@gmail.com', email, randomCode)
-            mail.close()
-        
-            return render_template('changepwd.html', msg='')
-        
-            if request.method == 'POST' and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
-                if newPass == confirmPass and codeFP == randomCode:
-                    msg = 'Password changed successfully.'
-                    return render_template('signin.html', msg='')
-                else:
-                    msg = 'Passwords or code do not match. Try again.'
-                    return render_template('changepwd.html', msg)
+            return redirect('/viewChangePwd')
         else:
-            msg='Invalid email. Please try again.'
-            return render_template('forgotpwd.html', msg='')
+            msg = 'Invalid email. Try again.'
+            return redirect('/viewForgotPwd')
+
+#ROUTES TO CHANGE PASSWORD PAGE
+@app.route('/BookStore/changepwd')
+def viewChangePwd():
+    return render_template('changepwd.html')
+
+#READS DATA FROM CHANGE PASSWORD PAGE
+@app.route('/BookStore/changepwd', methods=['GET', 'POST'])
+def changePwd():
+    port = 465  # For SSL
+    password = "@Bookstoreuga4050"
+    smtp_server = "smtp.gmail.com"
+    sender_email = "bookstoreuga4050@gmail.com"
+    receiver_email = "alt07134@uga.edu"
+    code = random.randint(1000, 9999)
+    code = str(code)
+    #print(code)
+    message = """\ Subject: Hi, your code is 
+    %s
+    """ % code
+    ########TRIGGER PASSWORD RESET#######
+    #currentpwd = "password"
+    #current = input("To change password, enter current password: ")
+    #if current == currentpwd:
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login("bookstoreuga4050@gmail.com", password)
+        server.sendmail(sender_email, receiver_email, message)
+
+    if request.method == 'POST' and 'inputEmail' in request.form and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
+        inputEmail = request.form['inputEmail']
+        codeFP = request.form['codeFP']
+        newPass = request.form['newPass']
+        confirmPass = request.form['confirmPass']
+        if newPass == confirmPass and codeFP == code:
+            db_config = read_db_config()
+            query = """UPDATE Users
+            SET Password = %s
+            WHERE Email = %s"""
+            data = (newPass, inputEmail)
+            conn = MySQLConnection(**db_config)
+            cursor = conn.cursor()
+            cursor.execute(query, data)
+            conn.commit()
+            msg = 'Password changed successfully.'
+            return rendirect('/viewSignIn')
+        else:
+            msg = 'Passwords or code do not match. Try again.'
+            return redirect('/viewChangePwd')
     else:
-        msg = 'Email address not recognized. Please try again.'
-        return render_template('forgotpwd.html', msg)
+        msg = 'Please fill out all fields.'
+        return redirect('/viewChangePwd')
+        #change password
+    #newPass = (newConf, userID)
+    #passFormula = "UPDATE Users SET Password = %s WHERE User_ID = %s"
+    
+    #if confirmation == code: 
+    #    if newPassword == newConf: 
+    #        mycursor.execute(passFormula, newPass)
+    #        mydb.commit()
+
+    #return render_template('changepwd.html', msg='')
 
 #ROUTES TO EDIT PROFILE PAGE
 @app.route('/BookStore/editprofile')

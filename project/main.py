@@ -236,15 +236,10 @@ def changePwd():
         newPass = request.form['newPass']
         confirmPass = request.form['confirmPass']
         if newPass == confirmPass and codeFP == code:
-            db_config = read_db_config()
-            query = """UPDATE Users
-            SET Password = %s
-            WHERE Email = %s"""
+            sql = "UPDATE Users SET Password = %s WHERE Email = %s"
             data = (newPass, inputEmail)
-            conn = MySQLConnection(**db_config)
-            cursor = conn.cursor()
-            cursor.execute(query, data)
-            conn.commit()
+            mycursor.execute(sql, data)
+            mydb.commit()
             msg = 'Password changed successfully.'
             return rendirect('/viewSignIn')
         else:

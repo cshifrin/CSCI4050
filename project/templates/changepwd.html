@@ -15,14 +15,18 @@
         <p>Check your email for a change password code and enter it below along with your new password! Then, you will
             be redirected to the sign in
             page.</p>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <p style="color: red;">{{ msg }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <form action="#" method="POST">
-	    <div class="form-group">
-                <label for="inputEmail">Email used at Registration</label>
-                <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="example@email.com" required>
-            </div>
             <div class="form-group">
-                <label for="inputEmail">Email used at Registration</label>
-                <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="example@email.com" required>
+                <label for="inputEmail">Email Used at Registration (required)</label>
+                <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="example@email.com"
+                    required>
             </div>
             <div class="form-group">
                 <label for="codeFP">Confirmation Code (required)</label>

@@ -21,6 +21,13 @@
 <body>
     <div class="main-content">
         <h1><img height="40px" src="/../static/css/ep.png"> Edit Profile</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <p style="color: red;">{{ msg }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <form action="#" method="POST">
             <div class="form-row">
                 <div class="form-group col-md-6">

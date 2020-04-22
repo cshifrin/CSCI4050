@@ -1,49 +1,46 @@
-from flask import Flask, render_template, request, redirect, url_for, session, json
+from flask import Flask, flash, render_template, request, redirect, url_for, session, json
 #from flask_mysqldb import MySQL
 #import MySQLdb.cursors
 import re
 import smtplib, ssl
 import random
-import mysql.connector
-from python_mysql_dbconfig import read_db_config
 from flaskext.mysql import MySQL
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-#import mysql.connector
+import mysql.connector
 #from mysql import connector
 
+
+
+### :) SQL Query Formulas, this time for the registerUser() function
+regFormula = "INSERT INTO Users (User_ID, First_Name, Last_Name, Email, Cell_Phone, Password, Status, Recieve_Promotion, User_Type_ID, Conf_Code) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+regAddressFormula = "INSERT INTO Addresses (User_ID, Address_ID, Street, City, State, Country, Zip_Code) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+regCardFormula = "INSERT INTO Payment_Cards (User_ID, Address_ID, Card_ID, Card_Number, Type_ID, Expiration_Date, Holder_Name) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+
 app = Flask(__name__)
-mysql = MySQL()
+#mysql = MySQL()
 
 #Configure the application
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = '#Hunter911'
 app.config['MYSQL_DATABASE_DB'] = 'BookStore'
-mysql.init_app(app)
+#mysql.init_app(app)
 
 app.secret_key = 'key'
 
-####CONNECTOR CODE
 
-#mydb = mysql.connector.connect(
-#	host="localhost",
-#	user="root",
-#	passwd="#Hunter911",
-#	database="BookStore"
-#)
+### :) :) :) CONNECTOR CODE for connector Driver
 
+mydb = mysql.connector.connect(
+	host="localhost",
+	user="root",
+	passwd="#Hunter911",
+	database="BookStore"
+)
 mycursor=mydb.cursor()
 
-userID = 18
-addressID = 18
-cardID = 18
-
-regFormula = "INSERT INTO Users (User_ID, First_Name, Last_Name, Email, Cell_Phone, Password, Status, Receive_Promotion, User_Type_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-
-regAddressFormula = "INSERT INTO Addresses (User_ID, Address_ID, Street, City, State, Country, Zip_Code) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-
-regCardFormula = "INSERT INTO Payment_Cards (User_ID, Address_ID, Card_ID, Card_Number, Type_ID, Expiration_Date, Holder_Name) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
 
 
@@ -53,6 +50,7 @@ regCardFormula = "INSERT INTO Payment_Cards (User_ID, Address_ID, Card_ID, Card_
 #STARTS OUT AT HOME
 @app.route("/")
 def main():
+
     return render_template('home.html')
 
 #ROUTES TO SIGNIN PAGE
@@ -63,36 +61,61 @@ def viewSignin():
 #READS USER DATA FROM SIGNIN PAGE
 @app.route('/BookStore/signin', methods=['POST'])
 def signin():
+
+#:) :) :) Get form data + match email/pass to DB, store into session.
     render_template('signin.html')
     if request.method == 'POST' and 'inputEmail' in request.form and 'inputPassword' in request.form:
         inputEmail = request.form['inputEmail']
         inputPassword = request.form['inputPassword']
 
-        con = mysql.connect()
-        cursor = con.cursor()
-        #Check for user
-        cursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s', (inputEmail, inputPassword))
-        data = cursor.fetchall()
+        mycursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s', (inputEmail, inputPassword))
+        data = mycursor.fetchone()
+        email = str(data[3])
+	
+	#:) :) :) Store relevant info from DB into session
         if len(data) > 0:
-            if data[0][3] == _password:
-                session['user'] = data[0][0]
-                return redirect('/userProfile')
-            else:
-                return render_template('signin.html', msg = 'Invalid email/password.')
+#            if data[0][3] == inputPassword:
+                session['user'] = data[0]
+                session['userEmail'] = email
+                session['userType'] = data[8]
+
+                if session['userType'] == 2:
+                    #:) reg user
+                    return redirect('/userProfile')
+
+                if session['userType'] == 3:
+                    #:) admin
+                    return redirect('/adminProfile')
+
+
         else:
+            flash('Invalid email/password.')
             return render_template('signin.html', msg = 'Invalid email/password.')
     else:
+        flash('Invalid email/password.')
         return render_template('signin.html', msg='Invalid email/password.')
 
+#ROUTES TO ADMIN PROFILE PAGE
+#:) (admin)
+@app.route('/BookStore/adminProfile')
+def adminProfile():
+	return render_template('adminprofile.html')
+
+
 #ROUTES TO USERPROFILE PAGE    
-@app.route('/BookStore/userProfile')
-def userProfile():
+@app.route('/BookStore/userprofile')
+def viewuserprofile():
         return render_template('userprofile.html')
 
-#LOGOUT    
-@app.route('/BookStore/logout')
+#SIGNOUT
+#:) :)   pop the session variables
+@app.route('/BookStore/signout')
 def logout():
     session.pop('user',None)
+    session.pop('userEmail',None)
+    session.pop('userType',None)
+    flash('Logged out successfully!')
+    msg='Logged out successfully!'
     return redirect('/')
 
 #ROUTES TO REGISTRATION PAGE
@@ -103,78 +126,130 @@ def viewReg():
 #READS USER DATA FROM REGISTRATION PAGE
 @app.route('/BookStore/reg', methods=['GET', 'POST'])
 def reg():
-    msg = ''
-    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputEmail' in request.form and 'inputPassword' in request.form:
-	inputName = request.form['inputName']
-	inputPhone = request.form['inputPhone']
-	inputEmail = request.form['inputEmail']
-	inputPassword = request.form['inputPassword']
-	inputAddress = request.form['inputAddress']
-	inputCity = request.form['inputCity']
-	inputState = request.form['inputstate']
-	inputZip = request.form['inputZip']
-	inputCardName = request.form['inputCardName']
-	inputCardNo = request.form['inputCardNo']
-	inputCardDate = request.form['inputCardDate']
-	inputCountry = 'USA'
-	#EXECUTE CODE TO MYSQL
-	nameList = inputName.split()
-	firstName = nameList[0]
-	lastName = nameList[1]
-        
-	regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2)
-	mycursor.execute(regFormula, regInfo)
-	addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
-	mycursor.execute(regAddressFormula, addInfo)
-	cardInfo = (userID, addressID, cardID, inputCardNo, 0, inputCardDate, inputCardName) 
-	mycursor.execute(regCardFormula, cardInfo)
-        
-	mydb.commit()
-	userID = userID+1
-	addressID = addressID+1
-	cardID = cardID +1
-        
-	confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-	confirm_url = url_for('users.confirm_email', 
-	token=confirm_serializer.dumps(inputEmail, salt='email-confirmation-salt'),
-	_external=True)
-	html = render_template('emailContent.html')
-                               #confirm_url=confirm_url)
-        
-	send_email('Confirm Your Email Address', [inputEmail], html)
-	flash('Thanks for registering! Please confirm your account by finding the message sent to your email address.', 'success')
 
-        return redirect('/regcon')
+#:) :) :) MY BABY! Pull all the form variables, input into dbs with relational logic
+	if request.method == 'POST' and 'inputEmail' in request.form and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
+		maxQuery = 'SELECT MAX(User_ID) FROM Users'
+		mycursor.execute(maxQuery)
+		maxID = mycursor.fetchone()
+		maxID = int(''.join(map(str, maxID)))
+		userID = maxID +1
+		addressID = userID
+		cardID = userID
+		inputName = request.form['inputName']
+		inputPhone = request.form['inputPhone']
+		inputEmail = request.form['inputEmail']
+		inputPassword = request.form['inputPassword']
+		inputAddress = request.form['inputAddress']
+		inputCity = request.form['inputCity']
+		inputState = request.form['inputState']
+		inputZip = request.form['inputZip']
+		inputCardName = request.form['inputCardName']
+		inputCardNo = request.form['inputCardNo']
+		if 'inputCardDate' in request.form:
+			inputCardDate = request.form['inputCardDate']
+		else: 
+			inputCardDate = None
+		inputCountry = 'USA'
+		firstName = ''
+		lastName = ''
 
-    elif request.method == 'POST':
-       	msg = 'Please fill out ALL required fields.'
-	return render_template('reg.html')     
+		nameList = inputName.split()
+		if len(nameList) > 1:
+			firstName = nameList[0]
+			lastName = nameList[1]
+		else:
+			firstName = nameList[0]
+		mycursor.execute('SELECT * FROM Users WHERE Email = %s', (inputEmail,))
 
-    if request.method == 'POST' and 'inputEmail' in request.form and 'inputPassword' in request.form:
-        inputEmail = request.form['inputEmail']
-        inputPassword = request.form['inputPassword']
+		data = mycursor.fetchall()
+		if len(data) > 0:
+			flash('An account already exists under this email!')
+			msg = 'An account already exists under this email!'
+			return render_template('reg.html', msg=msg)
+			
+		regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2, 0)
+		mycursor.execute(regFormula, regInfo)
+		mydb.commit()
 
-        #Check if account exists using MySQL
-        #cursor = mysql.connection.cursor(MySQL.cursors.DictCursor)
-        mycursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s AND Status = 1', (inputEmail, inputPassword,))
-        user = mycursor.fetchone()
+		addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
+		mycursor.execute(regAddressFormula, addInfo)
+		
+		mydb.commit()
 
-        #Check if account exists in database
-        if user:
-            session['loggedin'] = True
-            session['inputEmail'] = user['inputEmail']
-            session['inputPassword'] = user['inputPassword']
-            return render_template('userprofile.html')
-        else:
-            msg = 'Incorrect username/password.'
-            return render_template('signin.html')
-    else:
-        return redirect('/reg')
+		cardInfo = (userID, addressID, cardID, inputCardNo, 1, inputCardDate, inputCardName) 
+		mycursor.execute(regCardFormula, cardInfo)
+		
+		mydb.commit()
+		userID = userID+1
+		addressID = addressID+1
+		cardID = cardID +1
+
+	### :) :)  :) send confirmation email	
+		port = 465  # For SSL
+		password = "@Bookstoreuga4050"
+
+		smtp_server = "smtp.gmail.com"
+		sender_email = "bookstoreuga4050@gmail.com"
+		receiver_email = inputEmail
+		code = random.randint(1000, 9999)
+		code = str(code)
+		#print(code)
+		message = """\ Subject: Hi, your code is 
+	
+		%s
+		""" % code
+
+		# Create a secure SSL context
+		context = ssl.create_default_context()
+	
+		with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+			server.login("bookstoreuga4050@gmail.com", password)
+			server.sendmail(sender_email, receiver_email, message)
+	### :) :) :) email sent
+		mycursor.execute('UPDATE Users SET Conf_Code = %s WHERE Email = %s', (code, inputEmail))
+		mydb.commit()
+
+	### :) :) :) code stored in DB, now redirect to regcon page
+		return redirect('/regcon')
+
+	elif request.method == 'POST':
+		flash('Please fill out ALL required fields.')
+		msg = 'Please fill out ALL required fields.'
+		return render_template('reg.html', msg=msg)     
 
 #ROUTES TO REGCON PAGE    
 @app.route('/BookStore/regcon')
 def regcon():
     return render_template('regcon.html')
+
+
+@app.route('/BookStore/regcon', methods=['GET','POST'])
+### :) :) this method is to confirm registration; users must enter a code that was sent to their email.
+def confirm():
+	if request.method == 'POST':
+		inputCode = request.form['confNum']		
+		inputEmail = request.form['inputEmail']
+		
+		mycursor.execute('SELECT Conf_Code FROM Users WHERE Email = %s', (inputEmail,))
+		code = mycursor.fetchone()
+		code = int(''.join(map(str, code)))		
+		
+
+		### :) set status from 0 (inactive) to 1 (active)
+		newStatus = ("1", inputEmail)
+		statusFormula = "UPDATE Users SET Status = %s WHERE Email = %s"
+
+		### :) check if codes are equal
+		if int(inputCode) == code: 
+			mycursor.execute(statusFormula, newStatus)
+
+			mydb.commit()
+			return redirect('/BookStore/signin')
+		else: 
+			flash('Incorrect code or incorrect email, please try again.')
+			return render_template('regcon.html')
+
 
 #ROUTES TO HOME
 @app.route('/BookStore/home')
@@ -195,118 +270,211 @@ def resetPwd():
         mycursor.execute('Select * FROM Users WHERE Email = %s', (emailFP))
         user = mycursor.fetchone()
         if user:
-            return redirect('/viewChangePwd')
+            email = emailFP
+            randomCode = random.randrange(1000, 10000, 10)
+            mail = smtplib.SMTP('smtp.gmail.com', 587)
+            mail.ehlo()
+            mail.starttls()
+            mail.login('bookstoreuga4050@gmail.com','@Bookstoreuga4050')
+            mail.sendmail('bookstoreuga4050@gmail.com', email, randomCode)
+            mail.close()
+        
+            return render_template('changepwd.html', msg='')
+        
+            if request.method == 'POST' and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
+                if newPass == confirmPass and codeFP == randomCode:
+                    msg = 'Password changed successfully.'
+                    return render_template('signin.html', msg='')
+                else:
+                    msg = 'Passwords or code do not match. Try again.'
+                    return render_template('changepwd.html', msg)
         else:
-            msg = 'Invalid email. Try again.'
-            return redirect('/viewForgotPwd')
-
-#ROUTES TO CHANGE PASSWORD PAGE
-@app.route('/BookStore/changepwd')
-def viewChangePwd():
-    return render_template('changepwd.html')
-
-#READS DATA FROM CHANGE PASSWORD PAGE
-@app.route('/BookStore/changepwd', methods=['GET', 'POST'])
-def changePwd():
-    port = 465  # For SSL
-    password = "@Bookstoreuga4050"
-    smtp_server = "smtp.gmail.com"
-    sender_email = "bookstoreuga4050@gmail.com"
-    receiver_email = "alt07134@uga.edu"
-    code = random.randint(1000, 9999)
-    code = str(code)
-    #print(code)
-    message = """\ Subject: Hi, your code is 
-    %s
-    """ % code
-    ########TRIGGER PASSWORD RESET#######
-    #currentpwd = "password"
-    #current = input("To change password, enter current password: ")
-    #if current == currentpwd:
-    # Create a secure SSL context
-    context = ssl.create_default_context()
-
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login("bookstoreuga4050@gmail.com", password)
-        server.sendmail(sender_email, receiver_email, message)
-
-    if request.method == 'POST' and 'inputEmail' in request.form and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
-        inputEmail = request.form['inputEmail']
-        codeFP = request.form['codeFP']
-        newPass = request.form['newPass']
-        confirmPass = request.form['confirmPass']
-        if newPass == confirmPass and codeFP == code:
-            sql = "UPDATE Users SET Password = %s WHERE Email = %s"
-            data = (newPass, inputEmail)
-            mycursor.execute(sql, data)
-            mydb.commit()
-            msg = 'Password changed successfully.'
-            return rendirect('/viewSignIn')
-        else:
-            msg = 'Passwords or code do not match. Try again.'
-            return redirect('/viewChangePwd')
+            msg='Invalid email. Please try again.'
+            return render_template('forgotpwd.html', msg='')
     else:
-        msg = 'Please fill out all fields.'
-        return redirect('/viewChangePwd')
-        #change password
-    #newPass = (newConf, userID)
-    #passFormula = "UPDATE Users SET Password = %s WHERE User_ID = %s"
-    
-    #if confirmation == code: 
-    #    if newPassword == newConf: 
-    #        mycursor.execute(passFormula, newPass)
-    #        mydb.commit()
-
-    #return render_template('changepwd.html', msg='')
+        msg = 'Email address not recognized. Please try again.'
+        return render_template('forgotpwd.html', msg)
 
 #ROUTES TO EDIT PROFILE PAGE
 @app.route('/BookStore/editprofile')
 def viewEditProfile():
-    return render_template('editprofile.html')
+    if session['user'] == None:
+        return redirect('/')
+    else:
+        return render_template('editprofile.html')
 
 #READS DATA FROM EDIT PROFILE PAGE
-@app.route('/BookStore/editprofile')
+@app.route('/BookStore/editprofile', methods = ['GET', 'POST'])
 def editprofile():
-    msg = ''
-    if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
-	inputName = request.form['inputName']
-	inputPhone = request.form['inputPhone']
-	inputEmail = request.form['inputEmail']
-	inputPassword = request.form['inputPassword']
-	inputAddress = request.form['inputAddress']
-	inputCity = request.form['inputCity']
-	inputState = request.form['inputState']
-	inputZip = request.form['inputZip']
-	inputCardName = request.form['inputCardName']
-	inputCardNo = request.form['inputCardNo']
-	inputCardDate = request.form['inputCardDate']
-               
-        #EXECUTE CODE TO MYSQL
-	print(inputName + ' ' + inputPhone + ' ' + inputEmail)
-	nameList = inputName.split()
-	firstName = nameList[0]
-	lastName = nameList[1]
-	regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2)
-	mycursor.execute(regFormula, regInfo)
-        
-	addInfo = (userID, addressID, inputAddress, inputCity, inputState, inputCountry, inputZip)
-	mycursor.execute(regAddressFormula, addInfo)
 
-	cardInfo = (userID, addressID, cardID, inputCardNo, 0, inputCardDate, inputCardName) 
-	mycursor.execute(regCardFormula, cardInfo)
-	mycursor.commit()
+#:) Similar input fields as register, but updating profile
+	msg = ''
+	if request.method == 'POST' and 'inputName' in request.form and 'inputPhone' in request.form and 'inputPassword' in request.form:
+		#we know that session['userEmail'] has our email. 
+#		maxQuery = 'SELECT MAX(User_ID) FROM Users'
+#		mycursor.execute(maxQuery)
+#		maxID = mycursor.fetchone()
+#		maxID = int(''.join(map(str, maxID)))
+#		userID = maxID +1
+#		addressID = userID
+#		cardID = userID
+
+### :) :) :) a new fnc to pull the data from database using credentials in login session
+		mycursor.execute('SELECT * FROM Users WHERE Email = %s', (session['userEmail'],))
+		data = mycursor.fetchone()
+		
+		userID = data[0]
+		
+
+		##TODO: update maxQUery to currentUserQuery
+
+		inputName = request.form['inputName']
+		inputPhone = request.form['inputPhone']
+		inputPassword = request.form['inputPassword']
+		inputAddress = request.form['inputAddress']
+		inputCity = request.form['inputCity']
+		inputState = request.form['inputState']
+		inputZip = request.form['inputZip']
+		inputCardName = request.form['inputCardName']
+		inputCardNo = request.form['inputCardNo']
+		inputCardDate = request.form['inputCardDate']
+		nameList = inputName.split()
+		firstName = nameList[0]
+		lastName = nameList[1]
+
+	### :) :) :) Store data from form as tuples to push into SQL Queries.
+
+		newFirstName = (firstName, userID)
+		newLastName = (lastName, userID)
+		cell = (inputPhone, userID)
+		newPass = (inputPassword, userID)
+
+		addr = (inputAddress, userID)
+		city = (inputCity, userID)
+		state = (inputState, userID)
+		country = ("USA", userID)
+		zip = (inputZip, userID)
+
+		num = (inputCardName, userID)
+		exp = (inputCardNo, userID)
+		name = (inputCardDate, userID)
+
+
+		### :) :) :) about to have a bunch of SQL formulas and executions! 
+		#editFormula = "UPDATE Users SET (First_Name, Last_Name, Cell_Phone, Password) WHERE 
+
+		editNameFormula = "UPDATE Users SET First_Name = %s WHERE User_ID = %s"
+		editLNameFormula = "UPDATE Users SET Last_Name = %s WHERE User_ID = %s"
+		editPhoneFormula = "UPDATE Users SET Cell_Phone = %s WHERE User_ID = %s"
+		editPassFormula = "UPDATE Users SET Password = %s WHERE User_ID = %s"
+
+		mycursor.execute(editNameFormula, newFirstName)
+		mycursor.execute(editLNameFormula, newLastName)
+		mycursor.execute(editPhoneFormula, cell)
+		mycursor.execute(editPassFormula, newPass)
 	
-	msg = 'Profile was updated.'
-	return render_template('userprofile.html', msg=msg)
-    else:
-        return redirect('/editprofile')
+	### :) :) :) Input Addr data :)
 
-#def logout():
-	#wtf what triggers a logout function
-#    session.pop('loggedin', None)
-#    session.pop('id', None)
-#    session.pop('username', None)
-#    return render_template('signin.html', msg='')
+		editAddrFormula = "UPDATE Addresses SET Street = %s WHERE User_ID = %s"
+		editCityFormula = "UPDATE Addresses SET City = %s WHERE User_ID = %s"
+		editStateFormula = "UPDATE Addresses SET State = %s WHERE User_ID = %s"
+		editCountryFormula = "UPDATE Addresses SET Country = %s WHERE User_ID = %s"
+		editZipFormula = "UPDATE Addresses SET Zip_Code = %s WHERE User_ID = %s"
+
+
+		mycursor.execute(editAddrFormula, addr)
+		mycursor.execute(editCityFormula, city)
+		mycursor.execute(editStateFormula, state)
+		mycursor.execute(editCountryFormula, country)
+		mycursor.execute(editZipFormula, zip)
+
+	### :) :) :) INPUT CARD DATA
+
+		editNumFormula = "UPDATE Payment_Cards SET Card_Number = %s WHERE User_ID = %s"
+		editExpFormula = "UPDATE Payment_Cards SET Expiration_Date = %s WHERE User_ID = %s"
+		editNameFormula = "UPDATE Payment_Cards SET Holder_Name = %s WHERE User_ID = %s"
+
+		mycursor.execute(editNumFormula, num)
+		mycursor.execute(editExpFormula, exp)
+		mycursor.execute(editNameFormula, name)
+
+		mydb.commit()
+		flash('Edited Profile successfully! Your changes have been saved')
+		
+##TODO :) :) :) 
+	#add email notification, if possible. 
+		return render_template('userprofile.html', msg='Logged in successfully!')
+	else:
+		return redirect('/editprofile')
+
+#ROUTES TO UNREGSEARCH PAGE
+@app.route('/BookStore/unregsearch')
+def viewunregsearch():
+    ####if user == active, route to search.html
+    ####else, route to unregsearch.html
+    return render_template('unregsearch.html')
+
+#READS DATA FROM UNREGSEARCH PAGE
+@app.route('/BookStore/unregsearch', methods = ['GET', 'POST'])
+def unregsearch():
+    return
+
+#ROUTES TO SEARCH PAGE
+@app.route('/BookStore/search')
+def viewsearch():
+    ####if user == active, route to search.html
+    ####else, route to unregsearch.html
+    return render_template('search.html')
+
+#READS DATA FROM SEARCH PAGE
+@app.route('/BookStore/search', methods = ['GET', 'POST'])
+def search():
+    return
+
+#ROUTES TO UNREGBOOKDETAILS PAGE
+@app.route('/BookStore/unregbookdetails')
+def viewunregbookdetails():
+    return render_template('unregbookdetails.html')
+
+#ROUTES TO BOOKDETAILS PAGE
+@app.route('/BookStore/bookdetails')
+def viewbookdetails():
+    return render_template('bookdetails.html')
+
+#ROUTES TO CHECKOUT PAGE
+@app.route('/BookStore/checkout')
+def viewcheckout():
+    return render_template('checkout.html')
+
+#READS DATA FROM CHECKOUT PAGE
+@app.route('/BookStore/checkout', methods = ['GET', 'POST'])
+def checkout():
+    return
+
+#ROUTES TO CHECKOUT PAGE
+@app.route('/BookStore/checkoutcon')
+def viewcheckoutcon():
+    return render_template('checkoutcon.html')
+
+#ROUTES TO ORDERCON PAGE
+@app.route('/BookStore/ordercon')
+def viewordercon():
+    return render_template('ordercon.html')
+
+#ROUTES TO CART PAGE
+@app.route('/BookStore/cart')
+def viewcart():
+    return render_template('cart.html')
+
+#ROUTES TO ORDERHISTORY PAGE
+@app.route('/BookStore/orderhistory')
+def vieworderhistory():
+    return render_template('orderhistory.html')
+
+#ROUTES TO ORDERHISTORY PAGE
+@app.route('/BookStore/bookreturn')
+def viewbookreturn():
+    return render_template('bookreturn.html')
 
 #MAIN METHOD
 if __name__=="__main__":

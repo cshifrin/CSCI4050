@@ -11,6 +11,8 @@ from flaskext.mysql import MySQL
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import mysql.connector
+
+import base64
 #from mysql import connector
 
 
@@ -70,14 +72,14 @@ def signin():
     if request.method == 'POST' and 'inputEmail' in request.form and 'inputPassword' in request.form:
         inputEmail = request.form['inputEmail']
         inputPassword = request.form['inputPassword']
-
-        mycursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s', (inputEmail, inputPassword))
+        encPassword = base64.b64encode(inputPassword.encode("utf-8"))
+        mycursor.execute('Select * FROM Users WHERE Email = %s AND Password = %s', (inputEmail, encPassword))
         data = mycursor.fetchone()
         email = str(data[3])
 	
 	#:) :) :) Store relevant info from DB into session
         if len(data) > 0:
-#            if data[0][3] == inputPassword:
+#            if data[0][3] == encPassword:
                 session['user'] = data[0]
                 session['userEmail'] = email
                 session['userType'] = data[8]
@@ -117,7 +119,7 @@ def logout():
     session.pop('user',None)
     session.pop('userEmail',None)
     session.pop('userType',None)
-    flash('Logged out successfully!')
+#    flash('Logged out successfully!')
     msg='Logged out successfully!'
     return redirect('/')
 
@@ -157,6 +159,9 @@ def reg():
 		firstName = ''
 		lastName = ''
 
+		encPassword = base64.b64encode(inputPassword.encode("utf-8"))
+		encCardNo = base64.b64encode(inputCardNo.encode("utf-8"))
+
 		nameList = inputName.split()
 		if len(nameList) > 1:
 			firstName = nameList[0]
@@ -171,7 +176,7 @@ def reg():
 			msg = 'An account already exists under this email!'
 			return render_template('reg.html', msg=msg)
 			
-		regInfo = (userID, firstName, lastName, inputEmail, inputPhone, inputPassword, 0, 0, 2, 0)
+		regInfo = (userID, firstName, lastName, inputEmail, inputPhone, encPassword, 0, 0, 2, 0)
 		mycursor.execute(regFormula, regInfo)
 		mydb.commit()
 
@@ -180,7 +185,7 @@ def reg():
 		
 		mydb.commit()
 
-		cardInfo = (userID, addressID, cardID, inputCardNo, 1, inputCardDate, inputCardName) 
+		cardInfo = (userID, addressID, cardID, encCardNo, 1, inputCardDate, inputCardName) 
 		mycursor.execute(regCardFormula, cardInfo)
 		
 		mydb.commit()
@@ -260,44 +265,97 @@ def confirm():
 def home(): 
     return render_template('home.html')
 
-#ROUTES TO FORGOT PASSWORD PAGE
 @app.route('/BookStore/forgotpwd')
-def viewForgotPwd():
+def view():
     return render_template('forgotpwd.html')
 
-#READS DATA FROM FORGOT PASSWORD PAGE
-@app.route('/BookStore/forgotpwd', methods=['GET', 'POST'])
+@app.route('/BookStore/forgotpwd', methods=['POST'])
 def resetPwd():
     msg=''
     if request.method == 'POST' and 'emailFP' in request.form:
         emailFP = request.form['emailFP']
-        mycursor.execute('Select * FROM Users WHERE Email = %s', (emailFP))
+        mycursor.execute('Select * FROM Users WHERE Email = %s', (emailFP,))
         user = mycursor.fetchone()
-        if user:
-            email = emailFP
-            randomCode = random.randrange(1000, 10000, 10)
-            mail = smtplib.SMTP('smtp.gmail.com', 587)
-            mail.ehlo()
-            mail.starttls()
-            mail.login('bookstoreuga4050@gmail.com','@Bookstoreuga4050')
-            mail.sendmail('bookstoreuga4050@gmail.com', email, randomCode)
-            mail.close()
-        
-            return render_template('changepwd.html', msg='')
-        
-            if request.method == 'POST' and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
-                if newPass == confirmPass and codeFP == randomCode:
-                    msg = 'Password changed successfully.'
-                    return render_template('signin.html', msg='')
-                else:
-                    msg = 'Passwords or code do not match. Try again.'
-                    return render_template('changepwd.html', msg)
+        if len(user) > 0:
+            port = 465  # For SSL
+            password = "@Bookstoreuga4050"
+            smtp_server = "smtp.gmail.com"
+            sender_email = "bookstoreuga4050@gmail.com"
+#:) :) :) Use user session email to retrieve email to send forgotpwd
+        #mycursor.execute('SELECT * FROM Users WHERE Email = %s', (session['userEmail'],))
+
+            receiver_email = emailFP
+            code = random.randint(1000, 9999)
+            code = str(code)
+            #print(code)
+            message = """\ Subject: Hi, your code is 
+
+
+            %s
+            """ % code
+
+    # Create a secure SSL context
+    # :) :) :) Send the emails
+            context = ssl.create_default_context()
+
+            with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+                server.login("bookstoreuga4050@gmail.com", password)
+                server.sendmail(sender_email, receiver_email, message)
+            mycursor.execute('UPDATE Users SET Conf_Code = %s WHERE Email = %s', (code, emailFP))
+            mydb.commit()
+
+            return redirect('/BookStore/viewChangePwd')
         else:
-            msg='Invalid email. Please try again.'
-            return render_template('forgotpwd.html', msg='')
+            msg = 'Invalid email. Try again.'
+            return redirect('/BookStore/forgotpwd')
+
+#ROUTES TO CHANGE PASSWORD PAGE
+@app.route('/BookStore/viewChangePwd')
+def viewChangePwd():
+    return render_template('changepwd.html')
+
+#READS DATA FROM CHANGE PASSWORD PAGE
+@app.route('/BookStore/viewChangePwd', methods=['GET', 'POST'])
+def changePwd():
+        ########TRIGGER PASSWORD RESET#######
+    #currentpwd = "password"
+    #current = input("To change password, enter current password: ")
+    #if current == currentpwd:
+
+    if request.method == 'POST' and 'codeFP' in request.form and 'newPass' in request.form and 'confirmPass' in request.form:
+        inputEmail = request.form['inputEmail']
+        codeFP = request.form['codeFP']
+        newPass = request.form['newPass']
+        confirmPass = request.form['confirmPass']
+
+        passFormula = "UPDATE Users SET Password = %s WHERE Email = %s"
+    
+	### :) check if codes are equal
+        mycursor.execute('SELECT Conf_Code FROM Users WHERE Email = %s', (inputEmail,))
+        code = mycursor.fetchone()
+        code = int(''.join(map(str, code)))		
+
+        encPassword = base64.b64encode(newPass.encode("utf-8"))
+        if int(codeFP) == code and newPass==confirmPass: 
+            mycursor.execute(passFormula, (encPassword, inputEmail))
+            mydb.commit()
+
+            msg = 'Password changed successfully.'
+            return redirect('/BookStore/signin')
+        else:
+            msg = 'Passwords or code do not match. Try again.'
+            return redirect('/BookStore/viewChangePwd')
     else:
-        msg = 'Email address not recognized. Please try again.'
-        return render_template('forgotpwd.html', msg)
+        msg = 'Please fill out all fields.'
+        return redirect('/BookStore/viewChangePwd')
+        #change password
+    
+    #if confirmation == code: 
+    #    if newPassword == newConf: 
+    #        mycursor.execute(passFormula, newPass)
+    #        mydb.commit()
+
+    #return render_template('changepwd.html', msg='')
 
 #ROUTES TO EDIT PROFILE PAGE
 @app.route('/BookStore/editprofile')
@@ -346,12 +404,16 @@ def editprofile():
 		firstName = nameList[0]
 		lastName = nameList[1]
 
+		encPassword = base64.b64encode(inputPassword.encode("utf-8"))
+		encCardNo = base64.b64encode(inputCardNo.encode("utf-8"))
+
+
 	### :) :) :) Store data from form as tuples to push into SQL Queries.
 
 		newFirstName = (firstName, userID)
 		newLastName = (lastName, userID)
 		cell = (inputPhone, userID)
-		newPass = (inputPassword, userID)
+		newPass = (encPassword, userID)
 
 		addr = (inputAddress, userID)
 		city = (inputCity, userID)
@@ -360,7 +422,7 @@ def editprofile():
 		zip = (inputZip, userID)
 
 		num = (inputCardName, userID)
-		exp = (inputCardNo, userID)
+		exp = (encCardNo, userID)
 		name = (inputCardDate, userID)
 
 
@@ -410,6 +472,45 @@ def editprofile():
 		return render_template('userprofile.html', msg='Logged in successfully!')
 	else:
 		return redirect('/editprofile')
+
+
+### Other routing :)
+@app.route('/BookStore/unregsearch/')
+def unreg_search():
+    return render_template('unregsearch.html')
+
+@app.route('/BookStore/unregbookdetails/')
+def unreg_book_details():
+    return render_template('unregbookdetails.html')
+
+@app.route('/BookStore/search/')
+def search():
+    return render_template('search.html')
+
+@app.route('/BookStore/orderhistory/')
+def order_history():
+    return render_template('orderhistory.html')
+
+@app.route('/BookStore/managebooks/')
+def manage_books():
+    return render_template('managebooks.html')
+
+@app.route('/BookStore/cart/')
+def shopping_cart():
+    return render_template('cart.html')
+
+@app.route('/BookStore/bookdetails/')
+def book_details():
+    return render_template('bookdetails.html')
+
+@app.route('/BookStore/bookreturn/')
+def book_return():
+    return render_template('bookreturn.html')
+
+@app.route('/BookStore/checkout/')
+def checkout():
+    return render_template('checkout.html')
+
 
 #MAIN METHOD
 if __name__=="__main__":

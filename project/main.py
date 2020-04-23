@@ -568,8 +568,38 @@ def viewbookreturn():
 def viewmanagebooks():
     return render_template('managebooks.html')
 
-#READS DATA FROM MANAGEBOOKS PAGE
-@app.route('/BookStore/managebooks', methods = ['GET', 'POST'])
+#ROUTES TO ADD BOOK PAGE
+@app.route('/BookStore/addbook')
+def viewaddbook():
+    return render_template('addbook.html')
+
+#READS DATA FROM ADD BOOK PAGE
+@app.route('/BookStore/addbook', methods = ['GET', 'POST'])
+def addbook():
+    return
+
+#ROUTES TO EDIT BOOK PAGE
+@app.route('/BookStore/editbook')
+def vieweditbook():
+    return render_template('editbook.html')
+
+#READS DATA FROM EDIT BOOK PAGE
+@app.route('/BookStore/editbook', methods = ['GET', 'POST'])
+def editbook():
+    return
+
+#ROUTES TO DELETE BOOK PAGE
+@app.route('/BookStore/deletebook')
+def viewdeletebook():
+    return render_template('deletebook.html')
+
+#READS DATA FROM DELETE BOOK PAGE
+@app.route('/BookStore/deletebook', methods = ['GET', 'POST'])
+def deletebook():
+    return
+
+#READS DATA FROM DELETE BOOK PAGE
+@app.route('/BookStore/deletebook', methods = ['GET', 'POST'])
 def managebooks():
     ####For edit books
     if request.method == 'POST' and 'inputSearchManage' in request.form:

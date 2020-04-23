@@ -480,7 +480,24 @@ def viewunregsearch():
 #READS DATA FROM UNREGSEARCH PAGE
 @app.route('/BookStore/unregsearch', methods = ['GET', 'POST'])
 def unregsearch():
-    return
+    if request.method == 'POST' and 'inputSearch' in request.form:
+        inputSearch = request.form['inputSearh']
+        mycursor.execute('Select * FROM Books WHERE Title = %s', (inputSearch,))
+        book = mycursor.fetchall()
+        if len(book) == 0:
+            mycursor.execute('Select * FROM Books WHERE Author = %s', (inputSearch,))
+            book = mycursor.fetchall()
+            if len(book) == 0:
+                flash('No results.')
+                msg = 'No results.'
+                return redirect('/BookStore/viewunregsearch')
+            else:
+                ##search by author
+        else:
+            ##search by title
+            return
+    else:
+        return redirect('/BookStore/viewunregsearch')
 
 #ROUTES TO SEARCH PAGE
 @app.route('/BookStore/search')
@@ -503,6 +520,12 @@ def viewunregbookdetails():
 @app.route('/BookStore/bookdetails')
 def viewbookdetails():
     return render_template('bookdetails.html')
+
+#ADD BOOKS TO CART OR CHECKOUT
+@app.route('/BookStore/bookdetails', methods = ['GET', 'POST'])
+def addtocart():
+    return
+    
 
 #ROUTES TO CHECKOUT PAGE
 @app.route('/BookStore/checkout')

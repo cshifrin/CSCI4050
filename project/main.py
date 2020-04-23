@@ -576,6 +576,38 @@ def viewaddbook():
 #READS DATA FROM ADD BOOK PAGE
 @app.route('/BookStore/addbook', methods = ['GET', 'POST'])
 def addbook():
+    if request.method == 'POST' and 'inputBookID' in request.form:
+            inputBookID = request.form['inputBookID']
+            mycursor.execute('Select * FROM Books WHERE Book_ID = %s', (inputBookID,))
+            book = mycursor.fetchone()
+            if len(book) > 0:
+                #flash('Book already exists.')
+                msg = 'Book already exists.'
+                return redirect('/BookStore/viewadminprofile')
+            else:
+                inputTitle = request.form['inputTitle']
+                inputAuthor = request.form['inputAuthor']
+                inputPrice = request.form['inputPrice']
+                inputPublisher = request.form['inputPublisher']
+                inputSubject = request.form['inputSubject']
+
+                editTitle = "UPDATE Books SET Title = %s WHERE Book_ID = %s"
+                editPublisher = "UPDATE Books SET Publisher = %s WHERE Book_ID = %s"
+                editAuthor = "UPDATE Books SET Author = %s WHERE Book_ID = %s"
+                editPrice = "UPDATE Books SET Price = %s WHERE Book_ID = %s"
+                editSubject = "UPDATE Books SET Subject = %s WHERE Book_ID = %s"
+
+                mycursor.execute(editTitle, inputTitle)
+                mycursor.execute(editPublisher, inputPublisher)
+                mycursor.execute(editAuthor, inputAuthor)
+                mycursor.execute(editPrice, inputPrice)
+                mycursor.execute(editSubject, inputSubject)
+                
+                bookFormula = "INSERT INTO Books (Title, Publisher_ID, Author, Book_ID) VALUES (%s, %s, %s, %s)"
+                bookInfo = (inputTitle, inputPublisher, inputAuthor, inputBookID)
+                mycursor.execute(bookFormula, bookInfo)
+                mydb.commit()
+                return redirect('/BookStore/viewmanagebooks')
     return
 
 #ROUTES TO EDIT BOOK PAGE
@@ -586,7 +618,35 @@ def vieweditbook():
 #READS DATA FROM EDIT BOOK PAGE
 @app.route('/BookStore/editbook', methods = ['GET', 'POST'])
 def editbook():
-    return
+    if request.method== 'POST' and 'inputBookID' in request.form:
+        inputBookID = request.form['inputBookID']
+        mycursor.execute('Select * FROM Books WHERE Book_ID = %s', (inputBookID))
+        book = mycursor.fetchone()
+        if len(book) == 0:
+            msg = 'Book does not exist.'
+            return redirect('/BookStore/adminprofile')
+        else:
+            inputTitle = request.form['inputTitle']
+            inputAuthor = request.form['inputAuthor']
+            inputPrice = request.form['inputPrice']
+            inputPublisher = request.form['inputPublisher']
+            inputSubject = request.form['inputSubject']
+            
+            editTitle = "INSERT INTO Books SET Title = %s WHERE Book_ID = %s"
+            editPublisher = "UPDATE Books SET Publisher = %s WHERE Book_ID = %s"
+            editAuthor = "UPDATE Books SET Author = %s WHERE Book_ID = %s"
+            editPrice = "UPDATE Books SET Price = %s WHERE Book_ID = %s"
+            editSubject = "UPDATE Books SET Subject = %s WHERE Book_ID = %s"
+
+            "INSERT INTO Books (Title, Publisher_ID, Author, Book_ID) VALUES (%s, %s, %s, %s)"
+            bookFormula = "INSERT INTO Books (Title, Publisher_ID, Author, Book_ID, Price, Subject) VALUES (%s, %s, %s, %s, %s, %s)"
+            bookInfo = (inputTitle, inputPublisher, inputAuthor, inputBookID, inputPrice, inputSubject)
+            mycursor.execute(bookFormula, bookInfo)
+            mydb.commit()
+            
+    else:
+        msg = 'Invalid input.'
+    return redirect('/BookStore/adminprofile')
 
 #ROUTES TO DELETE BOOK PAGE
 @app.route('/BookStore/deletebook')

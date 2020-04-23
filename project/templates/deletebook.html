@@ -1,0 +1,41 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Delete Book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="/../static/css/favicon.png">
+</head>
+
+<nav class="navbar navbar-expand-sm navbar-light">
+    <a class="navbar-brand" href="#">Our Bookstore (Administrator View)</a>
+    <ul class="navbar-nav">
+        <li class="nav-item"> <a class="nav-link" href="/BookStore/adminprofile">Profile</a> </li>
+    </ul>
+</nav>
+
+<body>
+    <div class="main-content">
+      <h1><img height="40px" src="/../static/css/mb.png"> Delete Book</h1>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputBookID">ID</label>
+                    <input class="form-control" id="inputBookID" placeholder="123456789" required>
+                </div>
+            </div>
+            <div class="form-row">
+                
+            </div>
+            <button type="submit" class="btn btn-outline-dark">Delete Book</button>
+        </form>
+    </div>
+</body>
+
+<footer>
+    <p>Copyright © 2020 | Our Bookstore | All rights reserved.</p>
+</footer>
+
+</html>

@@ -488,10 +488,11 @@ def unregsearch():
             mycursor.execute('Select * FROM Books WHERE Author = %s', (inputSearch,))
             book = mycursor.fetchall()
             if len(book) == 0:
-                flash('No results.')
+                #flash('No results.')
                 msg = 'No results.'
                 return redirect('/BookStore/viewunregsearch')
             else:
+                return
                 ##search by author
         else:
             ##search by title
@@ -576,7 +577,7 @@ def managebooks():
         mycursor.execute('Select * FROM Books WHERE Book_ID = %s', (inputSearchManage,))
         book = mycursor.fetchone()
         if len(book) == 0:
-            flash('Book does not exist.')
+            #flash('Book does not exist.')
             msg = 'Book does not exist.'
             return redirect('/BookStore/viewmanagebooks')
         else:
@@ -589,7 +590,7 @@ def managebooks():
             mycursor.execute('Select * FROM Books WHERE Book_ID = %s', (inputBookID,))
             book = mycursor.fetchone()
             if len(book) > 0:
-                flash('Book already exists.')
+                #flash('Book already exists.')
                 msg = 'Book already exists.'
                 return redirect('/BookStore/viewmanagebooks')
             else:

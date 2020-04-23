@@ -87,6 +87,8 @@ CREATE TABLE `Books` (
   `Cover Picture` blob NOT NULL,
   `Publisher_ID` int(11) NOT NULL,
   `Publication_Date` date NOT NULL,
+  `Price` int NOT NULL,
+  `Subject` varchar(45) NOT NULL,
   `Author` varchar(45) NOT NULL,
   `Book_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

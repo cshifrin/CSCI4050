@@ -564,9 +564,9 @@ def viewbookreturn():
     return render_template('bookreturn.html')
 
 #ROUTES TO MANAGEBOOKS PAGE
-@app.route('/BookStore/managebooks')
-def viewmanagebooks():
-    return render_template('managebooks.html')
+#@app.route('/BookStore/managebooks')
+#def viewmanagebooks():
+#    return render_template('managebooks.html')
 
 #ROUTES TO ADD BOOK PAGE
 @app.route('/BookStore/addbook')
@@ -590,25 +590,14 @@ def addbook():
                 inputPrice = request.form['inputPrice']
                 inputPublisher = request.form['inputPublisher']
                 inputSubject = request.form['inputSubject']
-
-                editTitle = "UPDATE Books SET Title = %s WHERE Book_ID = %s"
-                editPublisher = "UPDATE Books SET Publisher = %s WHERE Book_ID = %s"
-                editAuthor = "UPDATE Books SET Author = %s WHERE Book_ID = %s"
-                editPrice = "UPDATE Books SET Price = %s WHERE Book_ID = %s"
-                editSubject = "UPDATE Books SET Subject = %s WHERE Book_ID = %s"
-
-                mycursor.execute(editTitle, inputTitle)
-                mycursor.execute(editPublisher, inputPublisher)
-                mycursor.execute(editAuthor, inputAuthor)
-                mycursor.execute(editPrice, inputPrice)
-                mycursor.execute(editSubject, inputSubject)
                 
-                bookFormula = "INSERT INTO Books (Title, Publisher_ID, Author, Book_ID) VALUES (%s, %s, %s, %s)"
-                bookInfo = (inputTitle, inputPublisher, inputAuthor, inputBookID)
+                bookFormula = "INSERT INTO Books (Title, Publisher_ID, Price, Subject, Author, Book_ID) VALUES (%s, %s, %s, %s, %s, %s)"
+                bookInfo = (inputTitle, inputPublisher, inputPrice, inputSubject, inputAuthor, inputBookID)
                 mycursor.execute(bookFormula, bookInfo)
                 mydb.commit()
-                return redirect('/BookStore/viewmanagebooks')
-    return
+    else:
+        msg = 'Please enter book ID.'
+    return redirect('/BookStore/viewmanagebooks')
 
 #ROUTES TO EDIT BOOK PAGE
 @app.route('/BookStore/editbook')
@@ -638,7 +627,6 @@ def editbook():
             editPrice = "UPDATE Books SET Price = %s WHERE Book_ID = %s"
             editSubject = "UPDATE Books SET Subject = %s WHERE Book_ID = %s"
 
-            "INSERT INTO Books (Title, Publisher_ID, Author, Book_ID) VALUES (%s, %s, %s, %s)"
             bookFormula = "INSERT INTO Books (Title, Publisher_ID, Author, Book_ID, Price, Subject) VALUES (%s, %s, %s, %s, %s, %s)"
             bookInfo = (inputTitle, inputPublisher, inputAuthor, inputBookID, inputPrice, inputSubject)
             mycursor.execute(bookFormula, bookInfo)
@@ -656,7 +644,23 @@ def viewdeletebook():
 #READS DATA FROM DELETE BOOK PAGE
 @app.route('/BookStore/deletebook', methods = ['GET', 'POST'])
 def deletebook():
-    return
+    if request.method== 'POST' and 'inputBookID' in request.form:
+        inputBookID = request.form['inputBookID']
+        mycursor.execute('Select * FROM Books WHERE Book_ID = %s', (inputBookID))
+        book = mycursor.fetchone()
+        if len(book) == 0:
+            msg = 'Book does not exist.'
+            return redirect('/BookStore/adminprofile')
+        else:
+            deleteBook = "DELETE FROM Books WHERE Book_ID = %s"
+            bookInfo = (inputBookID)
+            mycursor.execute(deleteBook, bookInfo)
+            mydb.commit()
+            return redirect('/BookStore/adminprofile')
+            
+    else:
+        msg = 'Please enter book ID.'
+    return redirect('/BookStore/adminprofile')
 
 #READS DATA FROM DELETE BOOK PAGE
 @app.route('/BookStore/deletebook', methods = ['GET', 'POST'])

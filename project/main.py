@@ -577,24 +577,17 @@ def viewaddbook():
 @app.route('/BookStore/addbook', methods = ['GET', 'POST'])
 def addbook():
     if request.method == 'POST' and 'inputBookID' in request.form:
-            inputBookID = request.form['inputBookID']
-            mycursor.execute('Select * FROM Books WHERE Book_ID = %s', (inputBookID,))
-            book = mycursor.fetchone()
-            if len(book) > 0:
-                #flash('Book already exists.')
-                msg = 'Book already exists.'
-                return redirect('/BookStore/viewadminprofile')
-            else:
-                inputTitle = request.form['inputTitle']
-                inputAuthor = request.form['inputAuthor']
-                inputPrice = request.form['inputPrice']
-                inputPublisher = request.form['inputPublisher']
-                inputSubject = request.form['inputSubject']
+        inputBookID = request.form['inputBookID']
+        inputTitle = request.form['inputTitle']
+        inputAuthor = request.form['inputAuthor']
+        inputPrice = request.form['inputPrice']
+        inputPublisher = request.form['inputPublisher']
+        inputSubject = request.form['inputSubject']
                 
-                bookFormula = "INSERT INTO Books (Title, Publisher_ID, Price, Subject, Author, Book_ID) VALUES (%s, %s, %s, %s, %s, %s)"
-                bookInfo = (inputTitle, inputPublisher, inputPrice, inputSubject, inputAuthor, inputBookID)
-                mycursor.execute(bookFormula, bookInfo)
-                mydb.commit()
+        bookFormula = "INSERT INTO Books (Title, Publisher_ID, Price, Subject, Author, Book_ID) VALUES (%s, %s, %s, %s, %s, %s)"
+        bookInfo = (inputTitle, inputPublisher, inputPrice, inputSubject, inputAuthor, inputBookID)
+        mycursor.execute(bookFormula, bookInfo)
+        mydb.commit()
     else:
         msg = 'Please enter book ID.'
     return redirect('/BookStore/viewmanagebooks')

@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, redirect
 from flaskext.mysql import MySQL
 app = Flask(__name__)
 
-app.config['MYSQL_DATABASE_USER'] = 'danielgarcia'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Lizbeth77!'
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
 app.config['MYSQL_DATABASE_DB'] = 'BookStore'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 

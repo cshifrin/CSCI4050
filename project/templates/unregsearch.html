@@ -15,50 +15,27 @@
 
 <body>
     <div class="main-content">
+        </br>
         <h1><img height="40px" src="/../static/css/favicon.png"> Search for Books</h1>
-        <p>Search by book title, book author, or the subject of the book</p>
-        <form>
+        <form method="POST">
             <div class="form-group">
-                <label for="inputSearch">Search</label>
-                <input class="form-control" id="inputSearch" placeholder="Search" required>
-            </div>
-            <div class="form-group">
-                <label for="inputSearchCriteria">Select Criteria</label>
-                <select class="form-control" id="inputSearchCriteria">
-                    <option>Book Title</option>
-                    <option>Author</option>
-                    <option>Subject</option>
-                </select>
+                <label for="inputSearch">Search by book title, book author, or the subject of the book</label>
+                <input class="form-control" name="inputSearch" placeholder="Search" required>
             </div>
             <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
             <button type="submit" class="btn btn-outline-dark">Search</button>
         </form>
-    </div>
-    <div class="main-content">
-        <div class="book">
-            <h3>Title</h3>
-            <h4>Author</h4>
-            <p>Subject</p>
-            <p>$price</p>
-            <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/unregbookdetails';">View
-                Book</button>
-        </div>
-        <div class="book">
-            <h3>Title</h3>
-            <h4>Author</h4>
-            <p>Subject</p>
-            <p>$price</p>
-            <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/unregbookdetails';">View
-                Book</button>
-        </div>
-        <div class="book">
-            <h3>Title</h3>
-            <h4>Author</h4>
-            <p>Subject</p>
-            <p>$price</p>
-            <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/unregbookdetails';">View
-                Book</button>
-        </div>
+        </br>
+        </br>
+        {% for item in data %}
+        <tr>
+            <td><a style="font-style: italic; font-size: 30px;">{{item[0]}}</a></td></br>
+            <td>by {{item[1]}}</td></br>
+            <td>Subject: {{item[2]}}</td></br>
+            <td>Book ID: {{item[3]}}</td></br>
+            </br>
+        </tr>
+        {% endfor %}
     </div>
 </body>
 

@@ -1,3 +1,5 @@
+#CS4050-8
+
 from flask import Flask, flash, render_template, request, redirect, url_for, session, json
 #from flask_mysqldb import MySQL
 #import MySQLdb.cursors
@@ -24,10 +26,10 @@ app = Flask(__name__)
 #mysql = MySQL()
 
 #Configure the application
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '#Hunter911'
-app.config['MYSQL_DATABASE_DB'] = 'BookStore'
+#app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+##app.config['MYSQL_DATABASE_USER'] = 'root'
+#app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
+#app.config['MYSQL_DATABASE_DB'] = 'BookStore'
 #mysql.init_app(app)
 
 app.secret_key = 'key'
@@ -38,12 +40,10 @@ app.secret_key = 'key'
 mydb = mysql.connector.connect(
 	host="localhost",
 	user="root",
-	passwd="#Hunter911",
+	passwd="password",
 	database="BookStore"
 )
 mycursor=mydb.cursor()
-
-
 
 
 #mysql = MySQL(app)
@@ -52,6 +52,11 @@ mycursor=mydb.cursor()
 #STARTS OUT AT HOME
 @app.route("/")
 def main():
+
+    return render_template('home.html')
+
+@app.route("/BookStore")
+def bookstore():
     return render_template('home.html')
 
 #ROUTES TO SIGNIN PAGE
@@ -82,11 +87,11 @@ def signin():
 
                 if session['userType'] == 2:
                     #:) reg user
-                    return redirect('/BookStore/userProfile')
+                    return redirect('/BookStore/userprofile')
 
                 if session['userType'] == 3:
                     #:) admin
-                    return redirect('/BookStore/adminProfile')
+                    return redirect('/BookStore/adminprofile')
 
 
         else:
@@ -469,64 +474,52 @@ def editprofile():
 ### Other routing :)
 
 
+@app.route('/BookStore/search/', methods=['GET', 'POST'])
+def search():
+    if request.method == "GET":
+        mycursor.execute("SELECT * FROM Books")
+        data = mycursor.fetchall()
+        return render_template('unregsearch.html', data=data)
 
-#ROUTES TO UNREGSEARCH PAGE
-@app.route('/BookStore/unregsearch')
-def viewunregsearch():
-    ####if user == active, route to search.html
-    ####else, route to unregsearch.html
-    return render_template('unregsearch.html')
-
-#READS DATA FROM UNREGSEARCH PAGE
-@app.route('/BookStore/unregsearch', methods = ['GET', 'POST'])
-def unregsearch():
-    if request.method == 'POST' and 'inputSearch' in request.form:
-        inputSearch = request.form['inputSearh']
-        mycursor.execute('Select * FROM Books WHERE Title = %s', (inputSearch,))
-        book = mycursor.fetchall()
-        if len(book) == 0:
-            mycursor.execute('Select * FROM Books WHERE Author = %s', (inputSearch,))
-            book = mycursor.fetchall()
-            if len(book) == 0:
-                #flash('No results.')
-                msg = 'No results.'
-                return redirect('/BookStore/viewunregsearch')
-            else:
-                return
-                ##search by author
-        else:
-            ##search by title
-            return
-    else:
-        return redirect('/BookStore/viewunregsearch')
-
-#ROUTES TO SEARCH PAGE
-@app.route('/BookStore/search')
-def viewsearch():
-    ####if user == active, route to search.html
-    ####else, route to unregsearch.html
+    if request.method == "POST":
+        book = request.form['inputSearch']
+        # search by author or book
+        mycursor.execute("SELECT Title, Author, Subject, Book_ID FROM Books WHERE Title LIKE %s OR Author LIKE %s OR Subject LIKE %s", (book, book, book))
+        data = mycursor.fetchall()
+        print(data)
+        # all in the search box will return all the tuples
+#        if len(data) == 0 and book == 'all': 
+#           mycursor.execute("SELECT Title, Author, Subject, Book_ID FROM Books")
+#           mydb.commit()
+#           data = mycursor.fetchall()
+        return render_template('search.html', data=data)
     return render_template('search.html')
 
-#READS DATA FROM SEARCH PAGE
-@app.route('/BookStore/search', methods = ['GET', 'POST'])
-def search():
-    return
+@app.route('/BookStore/unregsearch/', methods=['GET', 'POST'])
+def unregsearch():
+    if request.method == "GET":
+        mycursor.execute("SELECT * FROM Books")
+        data = mycursor.fetchall()
+        return render_template('unregsearch.html', data=data)
+
+    if request.method == "POST":
+        book = request.form['inputSearch']
+        # search by author or book
+        mycursor.execute("SELECT Title, Author, Subject, Book_ID from Books WHERE Title LIKE %s OR Author LIKE %s OR Subject LIKE %s", (book, book, book))
+        data = cursor.fetchall()
+        # all in the search box will return all the tuples
+#        if len(data) == 0 and book == 'all': 
+#            mycursor.execute("SELECT Title, Author, Subject, Book_ID from Books")
+#            mydb.commit()
+#            data = mycursor.fetchall()
+        return render_template('unregsearch.html', data=data)
+    return render_template('unregsearch.html')
 
 #ROUTES TO UNREGBOOKDETAILS PAGE
 @app.route('/BookStore/unregbookdetails')
 def viewunregbookdetails():
     return render_template('unregbookdetails.html')
 
-#ROUTES TO BOOKDETAILS PAGE
-@app.route('/BookStore/bookdetails')
-def viewbookdetails():
-    return render_template('bookdetails.html')
-
-#ADD BOOKS TO CART OR CHECKOUT
-@app.route('/BookStore/bookdetails', methods = ['GET', 'POST'])
-def addtocart():
-    return
-    
 
 #ROUTES TO CHECKOUT PAGE
 @app.route('/BookStore/checkout')
@@ -548,10 +541,6 @@ def viewcheckoutcon():
 def viewordercon():
     return render_template('ordercon.html')
 
-#ROUTES TO CART PAGE
-@app.route('/BookStore/cart')
-def viewcart():
-    return render_template('cart.html')
 
 #ROUTES TO ORDERHISTORY PAGE
 @app.route('/BookStore/orderhistory')
@@ -573,6 +562,34 @@ def viewbookreturn():
 def viewaddbook():
     return render_template('addbook.html')
 
+"""
+#READS DATA FROM ADD BOOK PAGE
+@app.route('/BookStore/addbook', methods = ['GET', 'POST'])
+def addbook():
+    if request.method == 'POST' and 'inputBookID' in request.form:
+            inputBookID = request.form['inputBookID']
+            mycursor.execute('Select * FROM Books WHERE Book_ID = %s', (inputBookID,))
+            book = mycursor.fetchone()
+            if len(book) > 0:
+                #flash('Book already exists.')
+                msg = 'Book already exists.'
+                return redirect('/BookStore/viewadminprofile')
+            else:
+                inputTitle = request.form['inputTitle']
+                inputAuthor = request.form['inputAuthor']
+                inputPrice = request.form['inputPrice']
+                inputPublisher = request.form['inputPublisher']
+                inputSubject = request.form['inputSubject']
+                
+                bookFormula = "INSERT INTO Books (Title, Publisher_ID, Price, Subject, Author, Book_ID) VALUES (%s, %s, %s, %s, %s, %s)"
+                bookInfo = (inputTitle, inputPublisher, inputPrice, inputSubject, inputAuthor, inputBookID)
+                mycursor.execute(bookFormula, bookInfo)
+                mydb.commit()
+    else:
+        msg = 'Please enter book ID.'
+    return redirect('/BookStore/viewmanagebooks')
+"""
+
 #READS DATA FROM ADD BOOK PAGE
 @app.route('/BookStore/addbook', methods = ['GET', 'POST'])
 def addbook():
@@ -591,6 +608,7 @@ def addbook():
     else:
         msg = 'Please enter book ID.'
     return redirect('/BookStore/viewmanagebooks')
+
 
 #ROUTES TO EDIT BOOK PAGE
 @app.route('/BookStore/editbook')
@@ -693,8 +711,108 @@ def managebooks():
                 return redirect('/BookStore/viewmanagebooks')
     else:
         return redirect('/BookStore/viewmanagebooks')
-        
 
+
+
+###### :) :) :) 
+#### Coding a temp database for the shopping cart
+
+
+"""
+@app.route('/add', methods=['POST'])
+def add_product_to_cart():
+	try:
+		_quantity = int(request.form['quantity'])
+		_code = request.form['code']
+		# validate the received values
+		if _quantity and _code and request.method == 'POST':
+			mycursor.execute("SELECT * FROM Books WHERE Book_ID =%s", _code)
+			row = cursor.fetchone()
+			
+			itemArray = { row[4] : {'title' : row[0], 'ISBN' : row[6], 'quantity' : _quantity, 'price' : row[5], 'image' : row[1], 'total_price': _quantity * row[5]}}
+
+		#	title = row[0]
+		#	pubID = row[2]
+		#	pubDate = row[3]
+		#	bookID = row[4]
+		#	price = row[5]
+		#	priceAll = _quantity * price
+			
+			
+			session.modified = True
+			if 'cart_item' in session:
+				if row[4] in session['cart_item']:
+					for key, value in session['cart_item'].items():
+						if row[4] == key:
+							#session.modified = True
+							#if session['cart_item'][key]['quantity'] is not None:
+							#	session['cart_item'][key]['quantity'] = 0
+							old_quantity = session['cart_item'][key]['quantity']
+							total_quantity = old_quantity + _quantity
+							session['cart_item'][key]['quantity'] = total_quantity
+							session['cart_item'][key]['total_price'] = total_quantity * row[5]
+				else:
+					session['cart_item'] = array_merge(session['cart_item'], itemArray)
+
+				for key, value in session['cart_item'].items():
+					individual_quantity = int(session['cart_item'][key]['quantity'])
+					individual_price = float(session['cart_item'][key]['total_price'])
+					all_total_quantity = all_total_quantity + individual_quantity
+					all_total_price = all_total_price + individual_price
+			else:
+				session['cart_item'] = itemArray
+				all_total_quantity = all_total_quantity + _quantity
+				all_total_price = all_total_price + _quantity * row['price']
+			
+			session['all_total_quantity'] = all_total_quantity
+			session['all_total_price'] = all_total_price
+			
+			return redirect('/BookStore/cart')
+		else:
+			return 'Error while adding item to cart'
+	except Exception as e:
+		print(e)
+
+"""
+
+
+
+#@app.route('/add', methods=['POST'])
+#def view_cart():
+#	return render_template('cart.html')
+
+@app.route('/BookStore/add<BookID>')
+def addToCart(BookID):
+	return render_template('cart.html')
+
+
+@app.route('/BookStore/add?bookid=')
+def addCart():
+	return render_template('cart.html')
+
+
+###variable for cart.
+cart = {'': [('','','','')]}
+
+
+#ROUTES TO CART PAGE
+### :) :) :) Cart updates dynamically based on bookID retrieved from search page addCart form
+@app.route('/BookStore/cart', methods=['POST'])
+def addBookCart():
+	bookID = request.form['bookid']
+	print('Book ID is: ' + bookID)
+	mycursor.execute("SELECT Title, Author, Subject, Book_ID FROM Books WHERE Book_ID = %s", (bookID,))
+	bookData = mycursor.fetchall()
+	cart.update({bookID : bookData})
+	print(cart)
+	return render_template('cart.html', data=cart)
+   
+
+#ROUTES TO CART PAGE, GET Retrieval
+# :) :) :) passes in cart data to cart.html template in order to display all items in cart
+@app.route('/BookStore/cart')
+def viewCart():
+	return render_template('cart.html',data=cart)
 
 #MAIN METHOD
 if __name__=="__main__":

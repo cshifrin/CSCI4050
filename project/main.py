@@ -38,8 +38,8 @@ app.secret_key = 'key'
 
 mydb = mysql.connector.connect(
 	host="localhost",
-	user="danielgarcia",
-	passwd="Lizbeth77!",
+	user="root",
+	passwd="password",
 	database="BookStore"
 )
 mycursor=mydb.cursor()

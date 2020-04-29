@@ -21,30 +21,22 @@
 <body>
     <div class="main-content">
         <h1>Checkout Confirmation</h1>
-        <div class="book-list">
-            <div class="book">
-                <h3>Title</h3>
-                <h4>Author</h4>
-                <p>$price</p>
-                <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
-                    Book</button>
-            </div>
-            <div class="book">
-                <h3>Title</h3>
-                <h4>Author</h4>
-                <p>$price</p>
-                <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
-                    Book</button>
-            </div>
-            <div class="book">
-                <h3>Title</h3>
-                <h4>Author</h4>
-                <p>$price</p>
-                <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
-                    Book</button>
-            </div>
-        </div>
-        <h2>Total: $price</h2>
+        </br>
+        </br>
+        {% for item in data %}
+            <tr>
+                <td><a style="font-style: italic; font-size: 30px;">{{item[0]}}</a></td></br>
+                <td>by {{item[1]}}</td></br>
+                <td>Price: ${{item[2]}}</td></br>
+                <td>Subject: {{item[3]}}</td></br>
+                <td>Book ID: {{item[4]}}</td></br>
+                </br>
+            </tr>
+        {% endfor %}
+        <p style="margin-bottom: 0;">Subtotal: ${{sub}}</p>
+        <p style="margin: 0;">Promotion: <a style="color: green;">-${{prom}}</a></p>
+        <p style="margin-top: 0;">Sales Tax (6%): ${{tax}}</p>
+        <h2>Final Total: ${{price}}</h2></br>
         <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
         <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/ordercon';">Place
             Order</button>

@@ -10,7 +10,7 @@
 </head>
 
 <nav class="navbar navbar-expand-sm navbar-light">
-    <a class="navbar-brand" href="/BookStore/">Our Bookstore</a>
+    <a class="navbar-brand" href="/">Our Bookstore</a>
 </nav>
 
 <body>
@@ -31,8 +31,9 @@
         <tr>
             <td><a style="font-style: italic; font-size: 30px;">{{item[0]}}</a></td></br>
             <td>by {{item[1]}}</td></br>
-            <td>Subject: {{item[2]}}</td></br>
-            <td>Book ID: {{item[3]}}</td></br>
+            <td>Price: ${{item[2]}}</td></br>
+            <td>Subject: {{item[3]}}</td></br>
+            <td>Book ID: {{item[4]}}</td></br>
             </br>
         </tr>
         {% endfor %}

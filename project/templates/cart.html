@@ -20,38 +20,41 @@
 
 <body>
     <div class="main-content">
+        </br>
         <h1><img height="40px" src="/../static/css/vsc.png"> Shopping Cart</h1>
-        <div class="book-list">
-            <div class="book">
-                <h3>Title</h3>
-                <h4>Author</h4>
-                <p>$price</p>
-                <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
-                    Book</button>
-                <button type="button" class="btn btn-sm btn-outline-dark">Remove
-                    from Shopping Cart</button>
-            </div>
-            <div class="book">
-                <h3>Title</h3>
-                <h4>Author</h4>
-                <p>$price</p>
-                <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
-                    Book</button>
-                <button type="button" class="btn btn-sm btn-outline-dark">Remove
-                    from Shopping Cart</button>
-            </div>
-            <div class="book">
-                <h3>Title</h3>
-                <h4>Author</h4>
-                <p>$price</p>
-                <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.location.href = '/BookStore/bookdetails';">View
-                    Book</button>
-                <button type="button" class="btn btn-sm btn-outline-dark">Remove
-                    from Shopping Cart</button>
-            </div>
-            <button type="button" class="btn btn-outline-dark" onclick="history.go(-1)">Go Back</button>
-            <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/checkout';">Checkout</button>
-        </div>
+        </br>
+        </br>
+        {% for item in data %}
+            <tr>
+                <td><a style="font-style: italic; font-size: 30px;">{{item[0]}}</a></td></br>
+                <td>by {{item[1]}}</td></br>
+                <td>Price: ${{item[2]}}</td></br>
+                <td>Subject: {{item[3]}}</td></br>
+                <td>Book ID: {{item[4]}}</td></br>
+                <form action="/BookStore/remove/" method="post" style="margin-top: 10px;">
+                    <div class="form-row">
+                        <div class="col-md-4">
+                            <select class="custom-select" name="quantity" required>
+                                <option selected value="1">Only this Copy of this Book</option>
+                                <option value="all">All Copies of this Book</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <button type="submit" name="bookid" value="{{item[4]}}" class="btn btn-outline-dark">Remove
+                                from Cart</button>
+                        </div>
+                    </div>
+                </form></br>
+                </br>
+            </tr>
+        {% endfor %}
+        <br>
+        <h2>Total: ${{price}}</h2><br>
+        <form action="/BookStore/remove/" method="post">
+            <button type="submit" name="bookid" value="x" class="btn btn-outline-dark">Remove All
+                from Cart</button>
+        </form></br>
+        <button type="button" class="btn btn-outline-dark" onclick="window.location.href = '/BookStore/checkout/';">Checkout</button>
     </div>
 </body>
 

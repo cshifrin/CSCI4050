@@ -36,10 +36,25 @@
             <tr>
                 <td><a style="font-style: italic; font-size: 30px;">{{item[0]}}</a></td></br>
                 <td>by {{item[1]}}</td></br>
-                <td>Subject: {{item[2]}}</td></br>
-                <td>Book ID: {{item[3]}}</td></br>
-                <form action="" method="get" style="margin-top: 10px;">
-                    <button type="submit" name="bookid" value="{{item[3]}}" class="btn btn-outline-dark">Add to Cart</button>
+                <td>Price: ${{item[2]}}</td></br>
+                <td>Subject: {{item[3]}}</td></br>
+                <td>Book ID: {{item[4]}}</td></br>
+                <form action="/BookStore/cart" method="post" style="margin-top: 10px;">
+                    <div class="form-row">
+                        <div class="col-md-1">
+                            <select class="custom-select" name="quantity" required>
+                                <option selected value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <button type="submit" name="bookid" value="{{item[4]}}" class="btn btn-outline-dark">Add to
+                                Cart</button>
+                        </div>
+                    </div>
                 </form></br>
                 </br>
             </tr>

@@ -21,7 +21,6 @@ regFormula = "INSERT INTO Users (User_ID, First_Name, Last_Name, Email, Cell_Pho
 regAddressFormula = "INSERT INTO Addresses (User_ID, Address_ID, Street, City, State, Country, Zip_Code) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 regCardFormula = "INSERT INTO Payment_Cards (User_ID, Address_ID, Card_ID, Card_Number, Type_ID, Expiration_Date, Holder_Name) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
-
 app = Flask(__name__)
 #mysql = MySQL()
 
@@ -39,8 +38,8 @@ app.secret_key = 'key'
 
 mydb = mysql.connector.connect(
 	host="localhost",
-	user="root",
-	passwd="password",
+	user="danielgarcia",
+	passwd="Lizbeth77!",
 	database="BookStore"
 )
 mycursor=mydb.cursor()
@@ -55,17 +54,17 @@ def main():
 
     return render_template('home.html')
 
-@app.route("/BookStore")
+@app.route("/BookStore/")
 def bookstore():
     return render_template('home.html')
 
 #ROUTES TO SIGNIN PAGE
-@app.route('/BookStore/signin')
+@app.route('/BookStore/signin/')
 def viewSignin():
     return render_template('signin.html')
 
 #READS USER DATA FROM SIGNIN PAGE
-@app.route('/BookStore/signin', methods=['POST'])
+@app.route('/BookStore/signin/', methods=['POST'])
 def signin():
 
 #:) :) :) Get form data + match email/pass to DB, store into session.
@@ -87,6 +86,9 @@ def signin():
 
                 if session['userType'] == 2:
                     #:) reg user
+                    resetCart = "DELETE FROM cart;"
+                    mycursor.execute(resetCart)
+                    mydb.commit()
                     return redirect('/BookStore/userprofile')
 
                 if session['userType'] == 3:
@@ -102,34 +104,39 @@ def signin():
         return render_template('signin.html', msg='Invalid email/password.')
 
 #ROUTES TO ADMINPROFILE PAGE
-@app.route('/BookStore/adminprofile')
+@app.route('/BookStore/adminprofile/')
 def adminprofile():
 	return render_template('adminprofile.html')
 
 
 #ROUTES TO USERPROFILE PAGE    
-@app.route('/BookStore/userprofile')
+@app.route('/BookStore/userprofile/')
 def userprofile():
         return render_template('userprofile.html')
 
 #SIGNOUT
 #:) :)   pop the session variables
-@app.route('/BookStore/signout')
+@app.route('/BookStore/signout/')
 def logout():
     session.pop('user',None)
     session.pop('userEmail',None)
     session.pop('userType',None)
 #    flash('Logged out successfully!')
     msg='Logged out successfully!'
+
+    resetCart = "DELETE FROM cart;"
+    mycursor.execute(resetCart)
+    mydb.commit()
+
     return redirect('/')
 
 #ROUTES TO REGISTRATION PAGE
-@app.route('/BookStore/reg')
+@app.route('/BookStore/reg/')
 def viewReg():
     return render_template('reg.html')
 
 #READS USER DATA FROM REGISTRATION PAGE
-@app.route('/BookStore/reg', methods=['GET', 'POST'])
+@app.route('/BookStore/reg/', methods=['GET', 'POST'])
 def reg():
 
 #:) :) :) MY BABY! Pull all the form variables, input into dbs with relational logic
@@ -227,12 +234,12 @@ def reg():
 		return render_template('reg.html', msg=msg)     
 
 #ROUTES TO REGCON PAGE    
-@app.route('/regcon')
+@app.route('/regcon/')
 def regcon():
     return render_template('regcon.html')
 
 
-@app.route('/regcon', methods=['GET','POST'])
+@app.route('/regcon/', methods=['GET','POST'])
 ### :) :) this method is to confirm registration; users must enter a code that was sent to their email.
 def confirm():
 	if request.method == 'POST':
@@ -260,15 +267,15 @@ def confirm():
 
 
 #ROUTES TO HOME
-@app.route('/BookStore/home')
+@app.route('/BookStore/home/')
 def home(): 
     return render_template('home.html')
 
-@app.route('/BookStore/forgotpwd')
+@app.route('/BookStore/forgotpwd/')
 def view():
     return render_template('forgotpwd.html')
 
-@app.route('/BookStore/forgotpwd', methods=['POST'])
+@app.route('/BookStore/forgotpwd/', methods=['POST'])
 def resetPwd():
     msg=''
     if request.method == 'POST' and 'emailFP' in request.form:
@@ -307,12 +314,12 @@ def resetPwd():
             return redirect('/BookStore/forgotpwd')
 
 #ROUTES TO CHANGE PASSWORD PAGE
-@app.route('/BookStore/viewChangePwd')
+@app.route('/BookStore/viewChangePwd/')
 def viewChangePwd():
     return render_template('changepwd.html')
 
 #READS DATA FROM CHANGE PASSWORD PAGE
-@app.route('/BookStore/viewChangePwd', methods=['GET', 'POST'])
+@app.route('/BookStore/viewChangePwd/', methods=['GET', 'POST'])
 def changePwd():
         ########TRIGGER PASSWORD RESET#######
     #currentpwd = "password"
@@ -338,13 +345,13 @@ def changePwd():
             mydb.commit()
 
             msg = 'Password changed successfully.'
-            return redirect('/BookStore/signin')
+            return redirect('/BookStore/signin/')
         else:
             msg = 'Passwords or code do not match. Try again.'
-            return redirect('/BookStore/viewChangePwd')
+            return redirect('/BookStore/viewChangePwd/')
     else:
         msg = 'Please fill out all fields.'
-        return redirect('/BookStore/viewChangePwd')
+        return redirect('/BookStore/viewChangePwd/')
         #change password
     
     #if confirmation == code: 
@@ -355,7 +362,7 @@ def changePwd():
     #return render_template('changepwd.html', msg='')
 
 #ROUTES TO EDIT PROFILE PAGE
-@app.route('/BookStore/editprofile')
+@app.route('/BookStore/editprofile/')
 def viewEditProfile():
     if session['user'] == None:
         return redirect('/')
@@ -363,7 +370,7 @@ def viewEditProfile():
         return render_template('editprofile.html')
 
 #READS DATA FROM EDIT PROFILE PAGE
-@app.route('/BookStore/editprofile', methods = ['GET', 'POST'])
+@app.route('/BookStore/editprofile/', methods = ['GET', 'POST'])
 def editprofile():
 
 #:) Similar input fields as register, but updating profile
@@ -468,7 +475,7 @@ def editprofile():
 	#add email notification, if possible. 
 		return render_template('userprofile.html', msg='Logged in successfully!')
 	else:
-		return redirect('/editprofile')
+		return redirect('/editprofile/')
 
 
 ### Other routing :)
@@ -477,36 +484,24 @@ def editprofile():
 @app.route('/BookStore/search/', methods=['GET', 'POST'])
 def search():
     if request.method == "GET":
-        mycursor.execute("SELECT * FROM Books")
-        data = mycursor.fetchall()
-        return render_template('unregsearch.html', data=data)
+        return render_template('search.html')
 
     if request.method == "POST":
         book = request.form['inputSearch']
         # search by author or book
-        mycursor.execute("SELECT Title, Author, Subject, Book_ID FROM Books WHERE Title LIKE %s OR Author LIKE %s OR Subject LIKE %s", (book, book, book))
+        mycursor.execute("SELECT Title, Author, Price, Subject, Book_ID FROM Books WHERE Title LIKE %s OR Author LIKE %s OR Subject LIKE %s", (book, book, book))
         data = mycursor.fetchall()
         print(data)
-        # all in the search box will return all the tuples
-#        if len(data) == 0 and book == 'all': 
-#           mycursor.execute("SELECT Title, Author, Subject, Book_ID FROM Books")
-#           mydb.commit()
-#           data = mycursor.fetchall()
         return render_template('search.html', data=data)
     return render_template('search.html')
 
 @app.route('/BookStore/unregsearch/', methods=['GET', 'POST'])
 def unregsearch():
-    if request.method == "GET":
-        mycursor.execute("SELECT * FROM Books")
-        data = mycursor.fetchall()
-        return render_template('unregsearch.html', data=data)
-
     if request.method == "POST":
         book = request.form['inputSearch']
         # search by author or book
-        mycursor.execute("SELECT Title, Author, Subject, Book_ID from Books WHERE Title LIKE %s OR Author LIKE %s OR Subject LIKE %s", (book, book, book))
-        data = cursor.fetchall()
+        mycursor.execute("SELECT Title, Author, Price, Subject, Book_ID from Books WHERE Title LIKE %s OR Author LIKE %s OR Subject LIKE %s", (book, book, book))
+        data = mycursor.fetchall()
         # all in the search box will return all the tuples
 #        if len(data) == 0 and book == 'all': 
 #            mycursor.execute("SELECT Title, Author, Subject, Book_ID from Books")
@@ -516,39 +511,81 @@ def unregsearch():
     return render_template('unregsearch.html')
 
 #ROUTES TO UNREGBOOKDETAILS PAGE
-@app.route('/BookStore/unregbookdetails')
+@app.route('/BookStore/unregbookdetails/')
 def viewunregbookdetails():
     return render_template('unregbookdetails.html')
 
 
 #ROUTES TO CHECKOUT PAGE
-@app.route('/BookStore/checkout')
+@app.route('/BookStore/checkout/')
 def viewcheckout():
-    return render_template('checkout.html')
+    mycursor.execute("SELECT Title, Author, Price, Subject, Book_ID FROM cart")
+    bookData = mycursor.fetchall()
+
+    #get price
+    mycursor.execute("SELECT SUM(Price) FROM cart")
+    price = mycursor.fetchall()
+    price = "{:.2f}".format(price[0][0])
+
+    if len(bookData) > 0:
+        return render_template('checkout.html', data=bookData, price=price)
+    else:
+        return redirect('/BookStore/search/')
 
 #READS DATA FROM CHECKOUT PAGE
-@app.route('/BookStore/checkout', methods = ['GET', 'POST'])
+@app.route('/BookStore/checkout/', methods = ['GET', 'POST'])
 def checkout():
     return
 
 #ROUTES TO CHECKOUT PAGE
-@app.route('/BookStore/checkoutcon')
+@app.route('/BookStore/checkoutcon/', methods=['GET', 'POST'])
 def viewcheckoutcon():
-    return render_template('checkoutcon.html')
+    if request.method == "POST":
+        promoCode = request.form['inputPromotion']
+
+        mycursor.execute("SELECT Title, Author, Price, Subject, Book_ID FROM cart")
+        bookData = mycursor.fetchall()
+
+        #get price
+        mycursor.execute("SELECT SUM(Price) FROM cart")
+        price = mycursor.fetchall()
+        price = price[0][0]
+
+        sub = price
+
+        percent = 0
+
+        if promoCode != "None":
+            mycursor.execute("SELECT Percentage FROM Promotions WHERE Promotions_ID = %s", (promoCode,))
+            data = mycursor.fetchall()
+            #print(data)
+            if len(data) > 0:
+                percent = data[0][0]
+
+        prom = (float(price) * float(float(percent) / 100))
+        price = float(price) - prom
+        tax = float(price) * .06
+
+        price += tax
+
+        return render_template('checkoutcon.html', data=bookData, price="{:.2f}".format(price), prom="{:.2f}".format(prom), tax="{:.2f}".format(tax), sub="{:.2f}".format(sub))
 
 #ROUTES TO ORDERCON PAGE
-@app.route('/BookStore/ordercon')
+@app.route('/BookStore/ordercon/')
 def viewordercon():
+    resetCart = "DELETE FROM cart;"
+    mycursor.execute(resetCart)
+    mydb.commit()
     return render_template('ordercon.html')
 
 
 #ROUTES TO ORDERHISTORY PAGE
-@app.route('/BookStore/orderhistory')
+@app.route('/BookStore/orderhistory/')
 def vieworderhistory():
     return render_template('orderhistory.html')
 
 #ROUTES TO ORDERHISTORY PAGE
-@app.route('/BookStore/bookreturn')
+@app.route('/BookStore/bookreturn/')
 def viewbookreturn():
     return render_template('bookreturn.html')
 
@@ -558,7 +595,7 @@ def viewbookreturn():
 #    return render_template('managebooks.html')
 
 #ROUTES TO ADD BOOK PAGE
-@app.route('/BookStore/addbook')
+@app.route('/BookStore/addbook/')
 def viewaddbook():
     return render_template('addbook.html')
 
@@ -591,7 +628,7 @@ def addbook():
 """
 
 #READS DATA FROM ADD BOOK PAGE
-@app.route('/BookStore/addbook', methods = ['GET', 'POST'])
+@app.route('/BookStore/addbook/', methods = ['GET', 'POST'])
 def addbook():
     if request.method == 'POST' and 'inputBookID' in request.form:
         inputBookID = request.form['inputBookID']
@@ -611,12 +648,12 @@ def addbook():
 
 
 #ROUTES TO EDIT BOOK PAGE
-@app.route('/BookStore/editbook')
+@app.route('/BookStore/editbook/')
 def vieweditbook():
     return render_template('editbook.html')
 
 #READS DATA FROM EDIT BOOK PAGE
-@app.route('/BookStore/editbook', methods = ['GET', 'POST'])
+@app.route('/BookStore/editbook/', methods = ['GET', 'POST'])
 def editbook():
     if request.method== 'POST' and 'inputBookID' in request.form:
         inputBookID = request.form['inputBookID']
@@ -730,7 +767,6 @@ def add_product_to_cart():
 			row = cursor.fetchone()
 			
 			itemArray = { row[4] : {'title' : row[0], 'ISBN' : row[6], 'quantity' : _quantity, 'price' : row[5], 'image' : row[1], 'total_price': _quantity * row[5]}}
-
 		#	title = row[0]
 		#	pubID = row[2]
 		#	pubDate = row[3]
@@ -753,7 +789,6 @@ def add_product_to_cart():
 							session['cart_item'][key]['total_price'] = total_quantity * row[5]
 				else:
 					session['cart_item'] = array_merge(session['cart_item'], itemArray)
-
 				for key, value in session['cart_item'].items():
 					individual_quantity = int(session['cart_item'][key]['quantity'])
 					individual_price = float(session['cart_item'][key]['total_price'])
@@ -772,7 +807,6 @@ def add_product_to_cart():
 			return 'Error while adding item to cart'
 	except Exception as e:
 		print(e)
-
 """
 
 
@@ -781,38 +815,89 @@ def add_product_to_cart():
 #def view_cart():
 #	return render_template('cart.html')
 
-@app.route('/BookStore/add<BookID>')
+@app.route('/BookStore/add<BookID>/')
 def addToCart(BookID):
 	return render_template('cart.html')
 
 
-@app.route('/BookStore/add?bookid=')
+@app.route('/BookStore/add?bookid=/')
 def addCart():
 	return render_template('cart.html')
 
 
 ###variable for cart.
-cart = {'': [('','','','')]}
 
 
 #ROUTES TO CART PAGE
 ### :) :) :) Cart updates dynamically based on bookID retrieved from search page addCart form
-@app.route('/BookStore/cart', methods=['POST'])
+@app.route('/BookStore/cart/', methods=['POST'])
 def addBookCart():
-	bookID = request.form['bookid']
-	print('Book ID is: ' + bookID)
-	mycursor.execute("SELECT Title, Author, Subject, Book_ID FROM Books WHERE Book_ID = %s", (bookID,))
-	bookData = mycursor.fetchall()
-	cart.update({bookID : bookData})
-	print(cart)
-	return render_template('cart.html', data=cart)
-   
+    bookID = request.form['bookid']
+    quantity = request.form['quantity']
+    print('Book ID is: ' + bookID)
+    print('Quantity: ' + quantity)
+
+    #get book
+    mycursor.execute("SELECT Title, Author, Price, Subject, Book_ID FROM Books WHERE Book_ID = %s", (bookID,))
+    book = mycursor.fetchall()
+    print("Adding book to cart:", book[0])
+
+    #insert into cart
+    for x in range(int(quantity)):
+        cartInsert = "INSERT INTO cart (Title, Author, Price, Subject, Book_ID) VALUES (%s, %s, %s, %s, %s)"
+        mycursor.execute(cartInsert, book[0])
+        mydb.commit()
+
+    #get books in cart
+    mycursor.execute("SELECT Title, Author, Price, Subject, Book_ID FROM cart")
+    bookData = mycursor.fetchall()
+
+    #get price
+    mycursor.execute("SELECT SUM(Price) FROM cart")
+    price = mycursor.fetchall()
+    price = str(price[0][0])
+
+    if price == "None":
+        return render_template('cart.html', data=bookData, price="--")
+    else:
+        return render_template('cart.html', data=bookData, price="{:.2f}".format(float(price)))
+
+@app.route('/BookStore/remove/', methods=['POST'])
+def remove():
+    #remove book from cart
+    bookID = request.form['bookid']
+
+    if bookID == "x":
+        mycursor.execute("DELETE FROM cart")
+        mydb.commit()
+        return redirect('/BookStore/cart/')
+    else:
+        quantity = request.form['quantity']
+        if quantity == "all":
+            mycursor.execute("DELETE FROM cart WHERE Book_ID = %s", (bookID,))
+            mydb.commit()
+        else:
+            mycursor.execute("DELETE FROM cart WHERE Book_ID = %s LIMIT 1", (bookID,))
+            mydb.commit()
+        return redirect('/BookStore/cart/')
 
 #ROUTES TO CART PAGE, GET Retrieval
 # :) :) :) passes in cart data to cart.html template in order to display all items in cart
-@app.route('/BookStore/cart')
+@app.route('/BookStore/cart/')
 def viewCart():
-	return render_template('cart.html',data=cart)
+    #get books in cart
+    mycursor.execute("SELECT Title, Author, Price, Subject, Book_ID FROM cart")
+    bookData = mycursor.fetchall()
+
+    #get price
+    mycursor.execute("SELECT SUM(Price) FROM cart")
+    price = mycursor.fetchall()
+    price = str(price[0][0])
+
+    if price == "None":
+        return render_template('cart.html', data=bookData, price="--")
+    else:
+        return render_template('cart.html', data=bookData, price="{:.2f}".format(float(price)))
 
 #MAIN METHOD
 if __name__=="__main__":
